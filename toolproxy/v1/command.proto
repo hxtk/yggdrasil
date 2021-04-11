@@ -1,0 +1,185 @@
+syntax = "proto3";
+
+package yggdrasil.toolproxy.v1;
+
+option go_package="github.com/hxtk/yggdrasil/toolproxy/v1";
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+import "google/api/annotations.proto";
+
+enum Status {
+	// Setinel value; the command status is undefined.
+	UNDEFINED = 0;
+
+	// The command has been submitted but is not yet ready to run.
+	SUBMITTED = 1;
+
+	// The command is ready to run.
+	READY = 2;
+
+	// The command is running.
+	RUNNING = 3;
+
+	// The command has completed and exited with status code 0.
+	SUCCESS = 4;
+
+	// The command has completed and returned a non-zero status code.
+	ERROR = 5;
+
+	// The command has been deleted.
+	DELETED = 6;
+}
+
+
+// A command to be executed by the tool proxy.
+message Command {
+	// A unique identifier of the command. This ID should be considered opaque.
+	string name = 1;
+
+	// The user who issued the command
+	string issuer = 2;
+
+	// The array of arguments to run. The command should be the first argument.
+	//
+	// Example:
+	//    echo foo bar -> ["echo", "foo", "bar"]
+	repeated string argv = 3;
+
+	// A short description of what the command is intended to accomplish.
+	string comment = 4;
+
+	// The status of the command execution request.
+	Status status = 5;
+
+	// Standard Output of the command, if it has completed.
+	bytes std_out = 6;
+
+	// Standard Error of the command, if it has completed.
+	bytes std_err = 7;
+
+	// The time at which the command was initially issued.
+	google.protobuf.Timestamp create_time = 8;
+
+	// The time at which the command is approved or denied.
+	google.protobuf.Timestamp update_time = 9;
+
+	// The time at which the command was deleted.
+	google.protobuf.Timestamp delete_time = 10;
+
+	// The time the command started running.
+	google.protobuf.Timestamp start_time = 11;
+
+	// The time the command completed.
+	google.protobuf.Timestamp end_time = 12;
+}
+
+service ToolProxy {
+	// List commands which have been issued against this proxy instance.
+	rpc ListCommands(ListCommandsRequest) returns (ListCommandsResponse) {
+		option (google.api.http) = {
+			get: "/v1/commands"
+		};
+	};
+
+	rpc CreateCommand(CreateCommandRequest) returns (Command) {
+		option (google.api.http) = {
+			post: "/v1/commands"
+			body: "command"
+		};
+	};
+
+	// Retreive the status of a command.
+	rpc GetCommand(GetCommandRequest) returns (Command) {
+		option (google.api.http) = {
+			get: "/v1/{name=commands/*}"
+		};
+	};
+
+	// Alter a command. Note that this will delete all approvals on the command.
+	rpc UpdateCommand(UpdateCommandRequest) returns (Command) {
+		option (google.api.http) = {
+			patch: "/v1/{name=commands/*}"
+			body: "command"
+		};
+	};
+
+	// Run a command that has been marked as ready.
+	//
+	// If the command does not exist then a NotFound error code is returned.
+	//
+	// If the command is marked as undefined or submitted, this will return
+	// an error due to a failed precondition; the command must first be marked
+	// as ready before it can be run.
+	//
+	// If the command has already been run or is already running, this RPC
+	// will not trigger it to run again but will instead return the results
+	// of the original execution, waiting for that execution to complete if
+	// necessary.
+	rpc RunCommand(RunCommandRequest) returns (Command) {
+		option (google.api.http) = {
+			post: "/v1/{name=commands/*}:run"
+		};
+	};
+
+	// Cancel a command if it has not been scheduled or run yet. Otherwise, return an error.
+	rpc DeleteCommand(DeleteCommandRequest) returns (Command) {
+		option (google.api.http) = {
+			delete: "/v1/{name=commands/*}"
+		};
+	};
+}
+
+message ListCommandsRequest {
+	// An opaque token provided in a previous ListCommandsResponse
+	// which may be used to continue where one left off, or empty
+	// string to start from the beginning.
+	//
+	// To achieve the expected behavior, if page_token is non-empty,
+	// the other values, e.g., page_size, order_by, filter, should
+	// be equal to their values in the request that produced the
+	// page token being used.
+	//
+	// Note that 
+	string page_token = 1;
+
+	// The maximum number of items to return. Fewer items may be
+	// returned if this is the last page.
+	int32 page_size = 2;
+}
+
+message ListCommandsResponse {
+	repeated Command commands = 1;
+
+	// An opaque token that may be used to continue listing commands
+	// where this list response leaves off, or empty string if this
+	// is the last page of results.
+	//
+	// Note that it is possible for the last page to be empty, but
+	// it is guaranteed that the first empty page will be the last
+	// page.
+	string next_page_token = 2;
+}
+
+message CreateCommandRequest {
+	Command command = 1;
+}
+
+message GetCommandRequest {
+	string name = 1;
+}
+
+message RunCommandRequest {
+	string name = 1;
+}
+
+message UpdateCommandRequest {
+	string name = 1;
+	Command command = 2;
+	google.protobuf.FieldMask update_mask = 3;
+}
+
+message DeleteCommandRequest {
+	string name = 1;
+}

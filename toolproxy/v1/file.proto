@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package yggdrasil.files.v1;
+
+option go_package="github.com/hxtk/yggdrasil/files/v1";
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+import "google/api/annotations.proto";
+
+// A metadata object for an arbitrary data.
+message File {
+	// A unique identifier of the file, which shall be a URN.
+	// The first segment of the URN shall be `files` and subsequent segments
+	// taken together shall identify a file path.
+	string name = 1;
+
+	// The name of the resource of which this resource is a child; may be empty.
+	string parent = 2;
+
+	// Read-only field showing the SHA256 hash of the file's contents.
+	bytes hash = 4;
+
+	// The time at which the file was initially uploaded.
+	google.protobuf.Timestamp create_time = 7;
+
+	// The time at which the file was last updated, either by changing
+	// its metadata or its contents.
+	google.protobuf.Timestamp update_time = 8;
+
+	// The time at which the file was deleted. If this is non-zero, it is not
+	// guaranteed that the contents of the file will be available.
+	google.protobuf.Timestamp delete_time = 9;
+
+	// The raw contents of the file.
+	bytes contents = 10;
+}
+
+service Filesystem {
+	rpc ListFiles(ListFilesRequest) returns (ListFilesResponse) {
+		option (google.api.http) = {
+			get: "/v1/{parent=commands/*}/files"
+		};
+	};
+
+	rpc CreateFile(CreateFileRequest) returns (File) {
+		option (google.api.http) = {
+			create: "/v1/{parent=commands/*}/files"
+			body: "file"
+		};
+	};
+
+	rpc GetFile(GetFileRequest) returns (File) {
+		option (google.api.http) = {
+			patch: "/v1/{name=commands/*/files/**}"
+			body: "file"
+		};
+	};
+
+	rpc UpdateFile(UpdateFileRequest) returns (File) {
+		option (google.api.http) = {
+			patch: "/v1/{name=commands/*/files/**}"
+			body: "file"
+		};
+	};
+
+	rpc DeleteFile(DeleteFileRequest) returns (File) {
+		option (google.api.http) = {
+			delete: "/v1/{name=commands/*/files/**}"
+		};
+	};
+}
+
+message ListFilesRequest {
+	string parent = 1;
+	string page_token = 2;
+	int32 page_size = 3;
+	string order_by = 4;
+}
+
+message ListFilesResponse {
+	repeated File files = 1;
+	string next_page_token = 2;
+}
+
+message CreateFileRequest {
+	File file = 1;
+}
+
+message GetFileRequest {
+	string name = 1;
+}
+
+message UpdateFileRequest {
+	string name = 1;
+	File file = 2;
+	google.protobuf.FieldMask update_mask = 3;
+}
+
+message DeleteFileRequest {
+	string name = 1;
+}

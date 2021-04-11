@@ -1,0 +1,17 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["tls_config.go"],
+    importpath = "github.com/hxtk/yggdrasil/common/config/tlsconfig",
+    visibility = [
+        "//visibility:public",
+    ],
+)
+
+go_library(
+    name = "tlsconfig",
+    srcs = ["tls_config.go"],
+    importpath = "",
+    visibility = ["//visibility:public"],
+)
