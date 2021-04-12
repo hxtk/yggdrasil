@@ -1,0 +1,7 @@
+postgres:
+  port: 5432
+  database: toolproxy
+tls:
+  enabled: true
+  insecure: false
+addr: ":8080"

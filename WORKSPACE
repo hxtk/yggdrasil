@@ -376,3 +376,15 @@ _go_image_repos()
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
 
 container_deps()
+
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+)
+
+container_pull(
+  name = "kubectl_image_base",
+  registry = "docker.io",
+  repository = "bitnami/kubectl",
+  digest = "sha256:c1b101882e5b94a60282b6793e961920790834d834c3b0d1fc59496b8d3e3ed4",
+)

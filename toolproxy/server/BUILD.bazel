@@ -1,6 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
-load("@io_bazel_rules_docker//container:container.bzl", "container_layer", "container_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_layer", "container_image", "container_push")
 
 go_library(
     name = "lib",
@@ -81,4 +81,25 @@ container_image(
     ],
     workdir = "/home/tool-proxy",
     ports = ["8080"],
+)
+
+container_image(
+    name = "tool-proxy-kubectl",
+    base = "@kubectl_image_base//image",
+    cmd = ["/usr/bin/tool-server"],
+    layers = [
+        ":main_layer",
+        ":prod_layer",
+    ],
+    workdir = "/home/tool-proxy",
+    ports = ["8080"],
+)
+
+container_push(
+    name = "push-tool-proxy-kubectl",
+    image = ":tool-proxy-kubectl",
+    format = "Docker",
+    registry = "docker.io",
+    repository = "hxtk/tool-proxy-kubectl",
+    tag = "dev-latest",
 )

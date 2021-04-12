@@ -38,7 +38,7 @@ import (
 	"github.com/hxtk/yggdrasil/toolproxy/server/pkg/rpc"
 )
 
-var cfgFile string
+var cfgFiles []string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -88,17 +88,17 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", cfgFile, "Path to a configuration file to use.")
+	rootCmd.PersistentFlags().StringSliceVarP(&cfgFiles, "config", "c", cfgFiles, "Configuration file. If specified more than once, subsequent files will be merged into the first.")
 
 	cobra.OnInitialize(initConfig)
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
+	if len(cfgFiles) > 0 {
 		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-		fmt.Printf("Config file specified in arguments: %s\n", cfgFile)
+		viper.SetConfigFile(cfgFiles[0])
+		fmt.Printf("Config file specified in arguments: %s\n", cfgFiles[0])
 	} else {
 		// Find home directory.
 		home, err := homedir.Dir()
@@ -116,6 +116,7 @@ func initConfig() {
 		// Search config in home directory with name "toolproxy.yaml" (without extension).
 		viper.AddConfigPath(home)
 		viper.AddConfigPath(cwd)
+		viper.AddConfigPath("/etc/toolproxy")
 		viper.SetConfigName("toolproxy")
 	}
 
@@ -126,6 +127,15 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
-	log.Println(viper.ConfigFileUsed())
+
+	if len(cfgFiles) > 0 {
+		for _, f := range cfgFiles[1:] {
+			viper.SetConfigFile(f)
+			if err := viper.MergeInConfig(); err == nil {
+				fmt.Println("Using config file:", viper.ConfigFileUsed())
+			}
+		}
+	}
+
 	log.Println(viper.AllKeys())
 }

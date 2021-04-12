@@ -59,7 +59,7 @@ func FromViper(v *viper.Viper) (*sql.DB, error) {
 		if err != nil {
 			return nil, err
 		}
-		if err := m.Up(); err != nil {
+		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 			return nil, err
 		}
 	}

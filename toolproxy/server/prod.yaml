@@ -1,7 +1,12 @@
+postgres:
+  user: toolproxy
+  sslmode: verify-full
+  sslcert: /etc/toolproxy/client.crt
+  sslkey: /etc/toolproxy/client.key
+  sslrootcert: /etc/toolproxy/ca.crt
+  schema: file:///etc/tool-proxy/schema
+  host: localhost
 tls:
-  enabled: true
   certificate: /etc/toolproxy/server.crt
   key: /etc/toolproxy/server.key
   ca: /etc/toolproxy/ca.crt
-postgres:
-  schema: file:///etc/tool-proxy/schema
