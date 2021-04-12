@@ -7,7 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//common/config:go_default_library",
-        "//common/config/flags:go_default_library",
+        "//common/config/postgres:go_default_library",
         "//common/config/tlsconfig:go_default_library",
         "//common/grpc/server:go_default_library",
 	"//toolproxy/server/pkg/rpc:go_default_library",

@@ -14,11 +14,7 @@ type Server struct {
 	DB *sql.DB
 }
 
-func New(dsn string) *Server {
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		panic(err)
-	}
+func New(db *sql.DB) *Server {
 	return &Server{
 		DB: db,
 	}

@@ -1,0 +1,7 @@
+tls:
+  enabled: true
+  certificate: /etc/toolproxy/server.crt
+  key: /etc/toolproxy/server.key
+  ca: /etc/toolproxy/ca.crt
+postgres:
+  schema: file:///etc/tool-proxy/schema

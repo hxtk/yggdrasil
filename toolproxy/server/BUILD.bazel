@@ -1,4 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@io_bazel_rules_docker//container:container.bzl", "container_layer", "container_image")
 
 go_library(
     name = "lib",
@@ -12,4 +14,71 @@ go_binary(
     name = "tool-server",
     embed = [":lib"],
     visibility = ["//visibility:public"],
+)
+
+pkg_tar(
+    name = "tool_server_pkg",
+    srcs = [":tool-server"],
+    extension = "tar.gz",
+    package_dir = "/usr/bin",
+)
+
+pkg_tar(
+    name = "main_config",
+    srcs = ["prod.yaml"],
+    extension = "tar.gz",
+    mode = "0644",
+    package_dir = "/etc/tool-server",
+)
+
+pkg_tar(
+    name = "prod_config",
+    srcs = ["prod.yaml"],
+    extension = "tar.gz",
+    mode = "0644",
+    package_dir = "/etc/tool-server",
+)
+
+pkg_tar(
+    name = "dev_config",
+    srcs = ["dev.yaml"],
+    extension = "tar.gz",
+    mode = "0644",
+    package_dir = "/etc/tool-server",
+)
+
+
+container_layer(
+    name = "main_layer",
+    tars = [
+        "//toolproxy/server/schema:schema",
+	":tool_server_pkg",
+	":main_config",
+    ],
+)
+
+container_layer(
+    name = "prod_layer",
+    tars = [
+        ":prod_config",
+    ],
+)
+
+container_layer(
+    name = "dev_layer",
+    tars = [
+        ":dev_config",
+    ],
+)
+
+container_image(
+    name = "tool-proxy-image",
+    base = "@go_image_base//image",
+    cmd = ["/usr/bin/tool-server"],
+    layers = [
+        ":main_layer",
+        ":prod_layer",
+    ],
+    workdir = "/home/tool-proxy",
+    ports = ["8080"],
 )

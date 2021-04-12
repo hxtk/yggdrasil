@@ -48,7 +48,7 @@ message Command {
 	repeated string argv = 3;
 
 	// A short description of what the command is intended to accomplish.
-	string comment = 4;
+	string description = 4;
 
 	// The status of the command execution request.
 	Status status = 5;

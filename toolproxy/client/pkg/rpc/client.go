@@ -57,9 +57,9 @@ func (c *Client) Run(ctx context.Context, argv []string) {
 	cmd, err := c.tp.CreateCommand(ctx,
 		&pb.CreateCommandRequest{
 			Command: &pb.Command{
-				Argv:    argv,
-				Comment: "",
-				Status:  pb.Status_READY,
+				Argv:        argv,
+				Description: "",
+				Status:      pb.Status_READY,
 			},
 		},
 	)

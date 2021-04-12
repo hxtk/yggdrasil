@@ -27,8 +27,8 @@ func timestamp(t sql.NullTime) *timestamppb.Timestamp {
 }
 
 const getCommandQuery = `
-	SELECT issuer_id, argv, comment, status, std_out, std_err, create_time, update_time, delete_time, start_time, end_time
-	FROM Commands
+	SELECT issuer, argv, description, status, std_out, std_err, create_time, update_time, delete_time, start_time, end_time
+	FROM commands
 	WHERE id = $1;
 `
 
@@ -43,16 +43,16 @@ func (s *Server) GetCommand(ctx context.Context, r *pb.GetCommandRequest) (*pb.C
 	}
 	row := s.DB.QueryRowContext(ctx, getCommandQuery, id)
 
-	var issuerID int64
+	var issuer string
 	var argv []string
-	var comment string
+	var description string
 	var statusID int32
 	var stdOut, stdErr []byte
 	var createTime, updateTime, deleteTime, startTime, endTime sql.NullTime
 	err = row.Scan(
-		&issuerID,
+		&issuer,
 		pq.Array(&argv),
-		&comment,
+		&description,
 		&statusID,
 		&stdOut,
 		&stdErr,
@@ -70,18 +70,18 @@ func (s *Server) GetCommand(ctx context.Context, r *pb.GetCommandRequest) (*pb.C
 	}
 
 	return &pb.Command{
-		Name:       r.GetName(),
-		Issuer:     fmt.Sprintf("users/%d", issuerID),
-		Argv:       argv,
-		Comment:    comment,
-		Status:     pb.Status(statusID),
-		StdOut:     stdOut,
-		StdErr:     stdErr,
-		CreateTime: timestamp(createTime),
-		UpdateTime: timestamp(updateTime),
-		DeleteTime: timestamp(deleteTime),
-		StartTime:  timestamp(startTime),
-		EndTime:    timestamp(endTime),
+		Name:        r.GetName(),
+		Issuer:      issuer,
+		Argv:        argv,
+		Description: description,
+		Status:      pb.Status(statusID),
+		StdOut:      stdOut,
+		StdErr:      stdErr,
+		CreateTime:  timestamp(createTime),
+		UpdateTime:  timestamp(updateTime),
+		DeleteTime:  timestamp(deleteTime),
+		StartTime:   timestamp(startTime),
+		EndTime:     timestamp(endTime),
 	}, nil
 }
 
@@ -228,14 +228,14 @@ func (s *Server) awaitCommand(ctx context.Context, name string) (*pb.Command, er
 }
 
 const createCommandQuery = `
-	INSERT INTO commands ("issuer_id", "argv", "comment", "status", "create_time", "update_time") 
+	INSERT INTO commands ("issuer", "argv", "description", "status", "create_time", "update_time") 
 	VALUES ($1, $2, $3, $4, $5, $5)
 	RETURNING commands.id;
 `
 
 // CreateCommand implements ToolProxy for Server.
 func (s *Server) CreateCommand(ctx context.Context, r *pb.CreateCommandRequest) (*pb.Command, error) {
-	issuerID := 0
+	issuer := "hxtk"
 	createTime := time.Now()
 	cmdStatus := r.GetCommand().GetStatus()
 	if cmdStatus != pb.Status_SUBMITTED && cmdStatus != pb.Status_READY {
@@ -244,9 +244,9 @@ func (s *Server) CreateCommand(ctx context.Context, r *pb.CreateCommandRequest) 
 	row := s.DB.QueryRowContext(
 		ctx,
 		createCommandQuery,
-		issuerID,
+		issuer,
 		pq.Array(r.GetCommand().GetArgv()),
-		r.GetCommand().GetComment(),
+		r.GetCommand().GetDescription(),
 		cmdStatus,
 		createTime,
 	)
@@ -259,21 +259,21 @@ func (s *Server) CreateCommand(ctx context.Context, r *pb.CreateCommandRequest) 
 	}
 
 	return &pb.Command{
-		Name:       fmt.Sprintf("commands/%d", id),
-		Issuer:     fmt.Sprintf("users/%d", issuerID),
-		Argv:       r.GetCommand().GetArgv(),
-		Comment:    r.GetCommand().GetComment(),
-		Status:     r.GetCommand().GetStatus(),
-		CreateTime: timestamppb.New(createTime),
-		UpdateTime: timestamppb.New(createTime),
+		Name:        fmt.Sprintf("commands/%d", id),
+		Issuer:      issuer,
+		Argv:        r.GetCommand().GetArgv(),
+		Description: r.GetCommand().GetDescription(),
+		Status:      r.GetCommand().GetStatus(),
+		CreateTime:  timestamppb.New(createTime),
+		UpdateTime:  timestamppb.New(createTime),
 	}, nil
 }
 
 const updateCommandQuery = `
 	UPDATE Commands
-	SET (argv, comment, status, update_time) = ($2, $3, $4, $5)
+	SET (argv, description, status, update_time) = ($2, $3, $4, $5)
 	WHERE $1 = id
-	RETURNING issuer_id, status, std_out, std_err, create_time, delete_time, start_time, end_time;
+	RETURNING issuer, status, std_out, std_err, create_time, delete_time, start_time, end_time;
 `
 
 // UpdateCommand implements ToolProxy for Server.
@@ -298,15 +298,15 @@ func (s *Server) UpdateCommand(ctx context.Context, r *pb.UpdateCommandRequest) 
 	}
 
 	argv := r.GetCommand().GetArgv()
-	comment := r.GetCommand().GetComment()
+	description := r.GetCommand().GetDescription()
 	cmdStatus := r.GetCommand().GetStatus()
 
 	if len(mask) > 0 {
 		if _, ok := mask["argv"]; !ok {
 			argv = command.GetArgv()
 		}
-		if _, ok := mask["comment"]; !ok {
-			comment = command.GetComment()
+		if _, ok := mask["description"]; !ok {
+			description = command.GetDescription()
 		}
 		if _, ok := mask["status"]; !ok {
 			cmdStatus = command.GetStatus()
@@ -318,17 +318,17 @@ func (s *Server) UpdateCommand(ctx context.Context, r *pb.UpdateCommandRequest) 
 		updateCommandQuery,
 		id,
 		pq.Array(argv),
-		comment,
+		description,
 		cmdStatus,
 		updateTime,
 	)
 
-	var issuerID int64
+	var issuer string
 	var statusID int32
 	var stdOut, stdErr []byte
 	var createTime, deleteTime, startTime, endTime sql.NullTime
 	err = row.Scan(
-		&issuerID,
+		&issuer,
 		&statusID,
 		&stdOut,
 		&stdErr,
@@ -344,18 +344,18 @@ func (s *Server) UpdateCommand(ctx context.Context, r *pb.UpdateCommandRequest) 
 	}
 
 	return &pb.Command{
-		Name:       r.GetName(),
-		Issuer:     fmt.Sprintf("users/%d", issuerID),
-		Argv:       argv,
-		Comment:    comment,
-		Status:     pb.Status(statusID),
-		StdOut:     stdOut,
-		StdErr:     stdErr,
-		CreateTime: timestamp(createTime),
-		UpdateTime: timestamppb.New(updateTime),
-		DeleteTime: timestamp(deleteTime),
-		StartTime:  timestamp(startTime),
-		EndTime:    timestamp(endTime),
+		Name:        r.GetName(),
+		Issuer:      issuer,
+		Argv:        argv,
+		Description: description,
+		Status:      pb.Status(statusID),
+		StdOut:      stdOut,
+		StdErr:      stdErr,
+		CreateTime:  timestamp(createTime),
+		UpdateTime:  timestamppb.New(updateTime),
+		DeleteTime:  timestamp(deleteTime),
+		StartTime:   timestamp(startTime),
+		EndTime:     timestamp(endTime),
 	}, nil
 }
 
@@ -412,11 +412,10 @@ func (s *Server) DeleteCommand(ctx context.Context, r *pb.DeleteCommandRequest) 
 	// seen the error when we ran the SQL query, but we include it for
 	// exhaustiveness.
 	return nil, status.Errorf(codes.Internal, "Internal server error.")
-
 }
 
 const listCommandQuery = `
-	SELECT id, issuer_id, argv, comment, status, std_out, std_err, create_time, update_time, delete_time, start_time, end_time
+	SELECT id, issuer, argv, description, status, std_out, std_err, create_time, update_time, delete_time, start_time, end_time
 	FROM Commands
 	LIMIT $1 OFFSET $2;
 `
@@ -440,17 +439,18 @@ func (s *Server) ListCommands(ctx context.Context, r *pb.ListCommandsRequest) (*
 
 	var commands []*pb.Command
 	for rows.Next() {
-		var id, issuerID int64
+		var id int64
+		var issuer string
 		var argv []string
-		var comment string
+		var description string
 		var statusID int32
 		var stdOut, stdErr []byte
 		var createTime, updateTime, deleteTime, startTime, endTime sql.NullTime
 		err = rows.Scan(
 			&id,
-			&issuerID,
+			&issuer,
 			pq.Array(&argv),
-			&comment,
+			&description,
 			&statusID,
 			&stdOut,
 			&stdErr,
@@ -465,18 +465,18 @@ func (s *Server) ListCommands(ctx context.Context, r *pb.ListCommandsRequest) (*
 		}
 
 		commands = append(commands, &pb.Command{
-			Name:       fmt.Sprintf("commands/%d", id),
-			Issuer:     fmt.Sprintf("users/%d", issuerID),
-			Argv:       argv,
-			Comment:    comment,
-			Status:     pb.Status(statusID),
-			StdOut:     stdOut,
-			StdErr:     stdErr,
-			CreateTime: timestamp(createTime),
-			UpdateTime: timestamp(createTime),
-			DeleteTime: timestamp(createTime),
-			StartTime:  timestamp(createTime),
-			EndTime:    timestamp(createTime),
+			Name:        fmt.Sprintf("commands/%d", id),
+			Issuer:      issuer,
+			Argv:        argv,
+			Description: description,
+			Status:      pb.Status(statusID),
+			StdOut:      stdOut,
+			StdErr:      stdErr,
+			CreateTime:  timestamp(createTime),
+			UpdateTime:  timestamp(createTime),
+			DeleteTime:  timestamp(createTime),
+			StartTime:   timestamp(createTime),
+			EndTime:     timestamp(createTime),
 		})
 	}
 

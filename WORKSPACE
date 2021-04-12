@@ -1,5 +1,24 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+################################################################################
+# Package Rules
+
+http_archive(
+    name = "rules_pkg",
+    sha256 = "038f1caa773a7e35b3663865ffb003169c6a71dc995e39bf4815792f385d837d",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.4.0/rules_pkg-0.4.0.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/0.4.0/rules_pkg-0.4.0.tar.gz",
+    ],
+)
+
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+
+rules_pkg_dependencies()
+
+################################################################################
+# Protobuf Rules
+
 http_archive(
     name = "com_google_protobuf",
     sha256 = "9748c0d90e54ea09e5e75fb7fac16edce15d2028d4356f32211cfa3c0e956564",
@@ -35,6 +54,9 @@ http_archive(
         "https://github.com/bazelbuild/rules_go/releases/download/v0.26.0/rules_go-v0.26.0.tar.gz",
     ],
 )
+
+################################################################################
+# Golang Rules
 
 http_archive(
     name = "bazel_gazelle",
@@ -300,8 +322,57 @@ go_repository(
     version = "v0.1.5",
 )
 
+go_repository(
+    name = "com_github_golang_migrate_migrate_v4",
+    importpath = "github.com/golang-migrate/migrate/v4",
+    sum = "h1:qmRd/rNGjM1r3Ve5gHd5ZplytrD02UcItYNxJ3iUHHE=",
+    version = "v4.14.1",
+)
+
+go_repository(
+    name = "com_github_hashicorp_go_multierror",
+    importpath = "github.com/hashicorp/go-multierror",
+    sum = "h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+lD48awMYo=",
+    version = "v1.1.1",
+)
+
+go_repository(
+    name = "com_github_hashicorp_errwrap",
+    importpath = "github.com/hashicorp/errwrap",
+    sum = "h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY2I=",
+    version = "v1.1.0",
+)
+
 go_rules_dependencies()
 
 go_register_toolchains(version = "1.16")
 
 gazelle_dependencies()
+
+################################################################################
+# Container Rules
+
+http_archive(
+    name = "io_bazel_rules_docker",
+    sha256 = "95d39fd84ff4474babaf190450ee034d958202043e366b9fc38f438c9e6c3334",
+    strip_prefix = "rules_docker-0.16.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.16.0/rules_docker-v0.16.0.tar.gz"],
+)
+
+load(
+    "@io_bazel_rules_docker//repositories:repositories.bzl",
+    container_repositories = "repositories",
+)
+
+container_repositories()
+
+load(
+    "@io_bazel_rules_docker//go:image.bzl",
+    _go_image_repos = "repositories",
+)
+
+_go_image_repos()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
+container_deps()
