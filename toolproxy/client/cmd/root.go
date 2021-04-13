@@ -28,6 +28,8 @@ import (
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
+
+	"github.com/hxtk/yggdrasil/toolproxy/client/cmd/run"
 )
 
 var cfgFile string
@@ -59,6 +61,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", cfgFile, "Path to configuration file.")
+	rootCmd.AddCommand(run.NewCmdRun())
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -16,17 +16,19 @@ func FromViper(v *viper.Viper) (*tls.Config, error) {
 
 	config := &tls.Config{}
 
-	certFile := v.GetString("tls.certificate")
-	keyFile := v.GetString("tls.key")
+	if v.IsSet("tls.certificate") && v.IsSet("tls.key") {
+		certFile := v.GetString("tls.certificate")
+		keyFile := v.GetString("tls.key")
 
-	certificate, err := tls.LoadX509KeyPair(
-		certFile,
-		keyFile,
-	)
-	if err != nil {
-		return nil, err
+		certificate, err := tls.LoadX509KeyPair(
+			certFile,
+			keyFile,
+		)
+		if err != nil {
+			return nil, err
+		}
+		config.Certificates = []tls.Certificate{certificate}
 	}
-	config.Certificates = []tls.Certificate{certificate}
 
 	if v.IsSet("tls.insecure") {
 		config.InsecureSkipVerify = v.GetBool("tls.insecure")
@@ -45,6 +47,10 @@ func FromViper(v *viper.Viper) (*tls.Config, error) {
 
 		config.ClientCAs = certPool
 		config.RootCAs = certPool
+	}
+
+	if v.IsSet("tls.hostname") {
+		config.ServerName = v.GetString("tls.hostname")
 	}
 
 	return config, nil
