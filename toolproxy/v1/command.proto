@@ -9,6 +9,8 @@ import "google/protobuf/timestamp.proto";
 
 import "google/api/annotations.proto";
 
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
 enum Status {
 	// Setinel value; the command status is undefined.
 	UNDEFINED = 0;
@@ -36,7 +38,7 @@ enum Status {
 // A command to be executed by the tool proxy.
 message Command {
 	// A unique identifier of the command. This ID should be considered opaque.
-	string name = 1;
+	string name = 1 [(validator.field) = {regex: "^(commands/[^/]+$)?"}];
 
 	// The user who issued the command
 	string issuer = 2;
@@ -45,13 +47,13 @@ message Command {
 	//
 	// Example:
 	//    echo foo bar -> ["echo", "foo", "bar"]
-	repeated string argv = 3;
+	repeated string argv = 3 [(validator.field) = {repeated_count_min: 1}];
 
 	// A short description of what the command is intended to accomplish.
 	string description = 4;
 
 	// The status of the command execution request.
-	Status status = 5;
+	Status status = 5 [(validator.field) = {is_in_enum: true}];
 
 	// Standard Output of the command, if it has completed.
 	bytes std_out = 6;
@@ -167,19 +169,19 @@ message CreateCommandRequest {
 }
 
 message GetCommandRequest {
-	string name = 1;
+	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
 }
 
 message RunCommandRequest {
-	string name = 1;
+	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
 }
 
 message UpdateCommandRequest {
-	string name = 1;
+	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
 	Command command = 2;
 	google.protobuf.FieldMask update_mask = 3;
 }
 
 message DeleteCommandRequest {
-	string name = 1;
+	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
 }

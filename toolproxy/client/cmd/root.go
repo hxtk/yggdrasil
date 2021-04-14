@@ -29,6 +29,8 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 
+	"github.com/hxtk/yggdrasil/toolproxy/client/cmd/cancel"
+	"github.com/hxtk/yggdrasil/toolproxy/client/cmd/history"
 	"github.com/hxtk/yggdrasil/toolproxy/client/cmd/run"
 )
 
@@ -61,6 +63,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", cfgFile, "Path to configuration file.")
+	rootCmd.AddCommand(cancel.NewCmdCancel())
+	rootCmd.AddCommand(history.NewCmdHistory())
 	rootCmd.AddCommand(run.NewCmdRun())
 }
 

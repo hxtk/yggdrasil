@@ -20,10 +20,7 @@ type Client struct {
 func New(addr string, tlsConfig *tls.Config) *Client {
 	conn, err := grpc.Dial(addr,
 		grpc.WithTransportCredentials(
-			credentials.NewClientTLSFromCert(
-				tlsConfig.RootCAs,
-				tlsConfig.ServerName,
-			),
+			credentials.NewTLS(tlsConfig),
 		),
 		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor()),
 		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor()),

@@ -343,6 +343,20 @@ go_repository(
     version = "v1.1.0",
 )
 
+go_repository(
+    name = "com_github_data_dog_go_sqlmock",
+    importpath = "github.com/DATA-DOG/go-sqlmock",
+    sum = "h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20OEh60=",
+    version = "v1.5.0",
+)
+
+go_repository(
+    name = "com_github_mwitkow_go_proto_validators",
+    importpath = "github.com/mwitkow/go-proto-validators",
+    sum = "h1:qRlmpTzm2pstMKKzTdvwPCF5QfBNURSlAgN/R+qbKos=",
+    version = "v0.3.2",
+)
+
 go_rules_dependencies()
 
 go_register_toolchains(version = "1.16")
@@ -383,8 +397,8 @@ load(
 )
 
 container_pull(
-  name = "kubectl_image_base",
-  registry = "docker.io",
-  repository = "bitnami/kubectl",
-  digest = "sha256:c1b101882e5b94a60282b6793e961920790834d834c3b0d1fc59496b8d3e3ed4",
+    name = "kubectl_image_base",
+    digest = "sha256:c1b101882e5b94a60282b6793e961920790834d834c3b0d1fc59496b8d3e3ed4",
+    registry = "docker.io",
+    repository = "bitnami/kubectl",
 )

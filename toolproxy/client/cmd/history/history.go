@@ -13,38 +13,28 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package run
+package history
 
 import (
-	"context"
+	"fmt"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
-	"github.com/hxtk/yggdrasil/common/config/tlsconfig"
-	"github.com/hxtk/yggdrasil/toolproxy/client/pkg/rpc"
 )
 
-const description = `Execute a command
+const description = `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`
 
-func NewCmdRun() *cobra.Command {
+func NewCmdHistory() *cobra.Command {
 	return &cobra.Command{
-		Use:   "run",
-		Short: "Run a command on the remote host",
+		Use:   "history",
+		Short: "A brief description of your command",
 		Long:  description,
 		Run: func(cmd *cobra.Command, args []string) {
-			tlsConfig, err := tlsconfig.FromViper(viper.GetViper())
-			if err != nil {
-				log.WithError(err).Fatal("Error reading TLS Config")
-			}
-			client := rpc.New(":8080", tlsConfig)
-			client.Run(context.Background(), args)
+			fmt.Println("history called")
 		},
 	}
 }
