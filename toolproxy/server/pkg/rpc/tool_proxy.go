@@ -26,6 +26,13 @@ func timestamp(t sql.NullTime) *timestamppb.Timestamp {
 	return timestamppb.New(t.Time)
 }
 
+func unwrapstring(s sql.NullString) string {
+	if !s.Valid {
+		return ""
+	}
+	return s.String
+}
+
 const getCommandQuery = `
 	SELECT issuer, argv, description, status, std_out, std_err, create_time, update_time, delete_time, start_time, end_time
 	FROM commands
@@ -45,7 +52,7 @@ func (s *Server) GetCommand(ctx context.Context, r *pb.GetCommandRequest) (*pb.C
 
 	var issuer string
 	var argv []string
-	var description string
+	var description sql.NullString
 	var statusID int32
 	var stdOut, stdErr []byte
 	var createTime, updateTime, deleteTime, startTime, endTime sql.NullTime
@@ -65,15 +72,15 @@ func (s *Server) GetCommand(ctx context.Context, r *pb.GetCommandRequest) (*pb.C
 	if err == sql.ErrNoRows {
 		return nil, status.Errorf(codes.NotFound, "Command not found.")
 	} else if err != nil {
-		log.WithError(err).Errorln("Error getting command from database.")
-		return nil, status.Errorf(codes.Unavailable, "Error getting command.")
+		log.WithError(err).Errorln("Error getting command from database")
+		return nil, status.Errorf(codes.Unavailable, "error getting command")
 	}
 
 	return &pb.Command{
 		Name:        r.GetName(),
 		Issuer:      issuer,
 		Argv:        argv,
-		Description: description,
+		Description: unwrapstring(description),
 		Status:      pb.Status(statusID),
 		StdOut:      stdOut,
 		StdErr:      stdErr,
@@ -214,6 +221,7 @@ func (s *Server) awaitCommand(ctx context.Context, name string) (*pb.Command, er
 		return nil, err
 	}
 
+	// TODO: This should be some configurable, truncated exponential backoff.
 	for cmd.Status != pb.Status_SUCCESS && cmd.Status != pb.Status_ERROR && err == nil {
 		timer := time.NewTimer(time.Second)
 		select {
@@ -263,7 +271,7 @@ func (s *Server) CreateCommand(ctx context.Context, r *pb.CreateCommandRequest) 
 		Issuer:      issuer,
 		Argv:        r.GetCommand().GetArgv(),
 		Description: r.GetCommand().GetDescription(),
-		Status:      r.GetCommand().GetStatus(),
+		Status:      cmdStatus,
 		CreateTime:  timestamppb.New(createTime),
 		UpdateTime:  timestamppb.New(createTime),
 	}, nil
@@ -359,6 +367,11 @@ func (s *Server) UpdateCommand(ctx context.Context, r *pb.UpdateCommandRequest) 
 	}, nil
 }
 
+const deleteQuery = `
+	UPDATE Commands
+	SET (status, deleted_time) = ($2, $3)
+	WHERE id = $1 AND status IN ($4, $5, $6);`
+
 // DeleteCommand implements ToolProxy for Server.
 func (s *Server) DeleteCommand(ctx context.Context, r *pb.DeleteCommandRequest) (*pb.Command, error) {
 	var id int64
@@ -369,10 +382,7 @@ func (s *Server) DeleteCommand(ctx context.Context, r *pb.DeleteCommandRequest) 
 	}
 
 	deletedTime := time.Now()
-	_, err = s.DB.Exec(`
-		UPDATE Commands
-		SET (status, deleted_time) = ($2, $3)
-		WHERE id = $1 AND status IN ($4, $5, $6)`,
+	_, err = s.DB.Exec(deleteQuery,
 		id,
 		pb.Status_DELETED,
 		deletedTime,
