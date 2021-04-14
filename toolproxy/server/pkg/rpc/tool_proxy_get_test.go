@@ -135,7 +135,7 @@ func TestGetCommand(t *testing.T) {
 		}
 	})
 
-	t.Run("Not found command", func(t *testing.T) {
+	t.Run("database error fetching command", func(t *testing.T) {
 		db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 		if err != nil {
 			t.Fatalf("Error opening mock db: %v", err)
