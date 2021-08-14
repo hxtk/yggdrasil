@@ -43,7 +43,7 @@ func NewCmdRun() *cobra.Command {
 			if err != nil {
 				log.WithError(err).Fatal("Error reading TLS Config")
 			}
-			client := rpc.New(":8080", tlsConfig)
+			client := rpc.New(viper.GetViper().GetString("addr"), tlsConfig)
 			client.Run(context.Background(), args)
 		},
 	}

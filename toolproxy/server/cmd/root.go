@@ -25,7 +25,9 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
+	"sync"
 
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
@@ -65,16 +67,45 @@ to quickly create a Cobra application.`,
 		rpcServer := rpc.New(db)
 		s.Register(rpcServer)
 
-		addr := viper.GetString("addr")
+		addr := viper.GetString("grpc.addr")
 		lis, err := net.Listen("tcp", addr)
 		if err != nil {
-			log.WithError(err).WithField("addr", addr).Fatal("Cannot open listener.")
+			log.WithError(err).WithField("addr", addr).Fatal("Cannot open grpc listener.")
 		}
+
 		if viper.GetBool("tls.enabled") {
 			lis = tls.NewListener(lis, tlsConfig)
 		}
 
-		s.GRPCServer.Serve(lis)
+		var wg sync.WaitGroup
+		go func() {
+			wg.Add(1)
+			err := s.ServeGRPC(lis)
+			if err != nil {
+				log.WithError(err).Fatal("gRPC listener returned error.")
+			}
+			wg.Done()
+		}()
+
+		lis, err = net.Listen("tcp", viper.GetString("http.addr"))
+		if err != nil {
+			log.WithError(err).WithField("addr", addr).Fatal("Cannot open http listener.")
+		}
+
+		if viper.GetBool("tls.enabled") {
+			lis = tls.NewListener(lis, tlsConfig)
+		}
+
+		go func() {
+			wg.Add(1)
+			err := http.Serve(lis, s)
+			if err != nil {
+				log.WithError(err).Fatal("http listener returned error.")
+			}
+			wg.Done()
+		}()
+
+		wg.Wait()
 	},
 }
 

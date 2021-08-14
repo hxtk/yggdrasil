@@ -13,7 +13,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
-	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
 )
 
@@ -23,41 +22,22 @@ type Registrar interface {
 
 type Server struct {
 	tlsConfig  *tls.Config
-	GRPCServer *grpc.Server
+	grpcServer *grpc.Server
 	serveMux   *http.ServeMux
 	gwMux      *runtime.ServeMux
 }
 
-func (s *Server) Serve(lis net.Listener) error {
-	httpServer := http.Server{
-		TLSConfig: s.tlsConfig,
-		Handler:   s.serveMux,
-	}
-
-	mux := cmux.New(lis)
-	grpcL := mux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
-	httpL := mux.Match(cmux.HTTP1Fast())
-
-	go httpServer.Serve(httpL)
-	go s.GRPCServer.Serve(grpcL)
-
-	return mux.Serve()
+func (s *Server) ServeGRPC(lis net.Listener) error {
+	return s.grpcServer.Serve(lis)
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.ProtoMajor == 2 {
-		log.Println("Routing request to grpc server")
-		log.Println(r)
-		s.GRPCServer.ServeHTTP(w, r)
-	} else {
-		log.Println("Routing request to http server")
-		s.serveMux.ServeHTTP(w, r)
-	}
+	s.serveMux.ServeHTTP(w, r)
 }
 
 func (s *Server) Register(r Registrar) {
 	log.Println("Registering server")
-	r.Register(s.GRPCServer)
+	r.Register(s.grpcServer)
 }
 
 func New(config *tls.Config) *Server {
@@ -84,7 +64,7 @@ func New(config *tls.Config) *Server {
 
 	return &Server{
 		tlsConfig:  config,
-		GRPCServer: grpcServer,
+		grpcServer: grpcServer,
 		serveMux:   mux,
 		gwMux:      gwMux,
 	}

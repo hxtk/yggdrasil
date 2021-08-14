@@ -1,3 +1,5 @@
+workspace(name = "yggdrasil")
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 ################################################################################
@@ -21,9 +23,9 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "com_google_protobuf",
-    sha256 = "9748c0d90e54ea09e5e75fb7fac16edce15d2028d4356f32211cfa3c0e956564",
-    strip_prefix = "protobuf-3.11.4",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.11.4.zip"],
+    sha256 = "528927e398f4e290001886894dac17c5c6a2e5548f3fb68004cfb01af901b53a",
+    strip_prefix = "protobuf-3.17.3",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.17.3.zip"],
 )
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
@@ -36,12 +38,14 @@ git_repository(
     name = "com_google_googleapis",
     commit = "355a80d7efb196482e07c8c8ec249b0fdf7d3ff3",
     remote = "https://github.com/googleapis/googleapis.git",
+    shallow_since = "1616721465 -0700",
 )
 
 load("@com_google_googleapis//:repository_rules.bzl", "switched_rules_by_language")
 
 switched_rules_by_language(
     name = "com_google_googleapis_imports",
+    cc = True,
     go = True,
     grpc = True,
 )
@@ -401,4 +405,85 @@ container_pull(
     digest = "sha256:c1b101882e5b94a60282b6793e961920790834d834c3b0d1fc59496b8d3e3ed4",
     registry = "docker.io",
     repository = "bitnami/kubectl",
+)
+
+################################################################################
+# gRPC C++ Rules
+
+git_repository(
+    name = "com_github_grpc_grpc",
+    commit = "96b73272eadc01afb5fb45b92b408c47e4387274",
+    remote = "https://github.com/grpc/grpc.git",
+)
+
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+grpc_deps()
+
+# Extra deps are needed too. See https://github.com/grpc/grpc/issues/22436.
+load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
+grpc_extra_deps()
+
+load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
+
+pip_import(
+    name = "grpc_python_dependencies",
+    requirements = "@com_github_grpc_grpc//:requirements.bazel.txt",
+)
+
+load("@grpc_python_dependencies//:requirements.bzl", "pip_install")
+
+pip_repositories()
+
+pip_install()
+
+################################################################################
+# Ory Keto
+
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+new_git_repository(
+    name = "ory_keto_v1alpha1",
+    remote = "https://github.com/ory/keto.git",
+    commit = "3099ead2ef569e889e47c04204337639c89b1bf8",
+    build_file = "ory-keto-v1alpha1.bazel",
+    strip_prefix = "proto",
+    shallow_since = "1624432697 +0000",
+)
+
+################################################################################
+# C++ Dependencies
+
+http_archive(
+    name = "com_github_gflags_gflags",
+    sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+    strip_prefix = "gflags-2.2.2",
+    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_google_glog",
+    sha256 = "21bc744fb7f2fa701ee8db339ded7dce4f975d0d55837a97be7d46e8382dea5a",
+    strip_prefix = "glog-0.5.0",
+    urls = ["https://github.com/google/glog/archive/v0.5.0.zip"],
+)
+
+http_archive(
+    name = "com_github_jbeder_yaml_cpp",
+    urls = ["https://github.com/jbeder/yaml-cpp/archive/a6bbe0e50ac4074f0b9b44188c28cf00caf1a723.zip"],
+    strip_prefix = "yaml-cpp-a6bbe0e50ac4074f0b9b44188c28cf00caf1a723/",
+    sha256 = "03d214d71b8bac32f684756003eb47a335fef8f8152d0894cf06e541eaf1c7f4",
+)
+
+http_archive(
+    name = "com_google_googletest",
+    urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"],
+    strip_prefix = "googletest-release-1.11.0/",
+    sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+)
+
+http_archive(
+    name = "com_github_boostorg_optional",
+    urls = ["https://github.com/boostorg/optional/archive/refs/tags/optional-2021-03-10.zip"],
+    strip_prefix = "/optional-optional-2021-03-10/",
+    build_file = "@yggdrasil//:third_party/BUILD.com_github_boostorg_optional",
+    sha256 = "39b43ba64d67da7e5a34871bfcdd9b3a1d88e943514fc2d4c7d5c9cc2b0c0355",
 )

@@ -4,4 +4,7 @@ postgres:
 tls:
   enabled: true
   insecure: false
-addr: ":8080"
+http:
+  addr: ":8443"
+grpc:
+  addr: ":6443"
