@@ -78,8 +78,13 @@ to quickly create a Cobra application.`,
 			Buckets: buckets,
 		}, []string{"peer"})
 
+		lastPing := promauto.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "pinger_ping_rtt",
+		}, []string{"peer"})
+
 		p.OnRecv = func(addr *net.IPAddr, rtt time.Duration) {
-			pings.WithLabelValues(addr.String()).Observe(float64(rtt.Milliseconds()))
+			pings.WithLabelValues(addr.String()).Observe(rtt.Seconds() * 1000)
+			lastPing.WithLabelValues(addr.String()).Set(rtt.Seconds() * 1000)
 		}
 		p.OnIdle = func() {
 			attempts.Inc()
