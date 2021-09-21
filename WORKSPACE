@@ -361,6 +361,13 @@ go_repository(
     version = "v0.3.2",
 )
 
+go_repository(
+    name = "com_github_tatsushid_go_fastping",
+    importpath = "github.com/tatsushid/go-fastping",
+    sum = "h1:nt2877sKfojlHCTOBXbpWjBkuWKritFaGIfgQwbQUls=",
+    version = "v0.0.0-20160109021039-d7bb493dee3e",
+)
+
 go_rules_dependencies()
 
 go_register_toolchains(version = "1.16")
@@ -417,10 +424,12 @@ git_repository(
 )
 
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
 grpc_deps()
 
 # Extra deps are needed too. See https://github.com/grpc/grpc/issues/22436.
 load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
+
 grpc_extra_deps()
 
 load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
@@ -440,13 +449,14 @@ pip_install()
 # Ory Keto
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+
 new_git_repository(
     name = "ory_keto_v1alpha1",
-    remote = "https://github.com/ory/keto.git",
-    commit = "3099ead2ef569e889e47c04204337639c89b1bf8",
     build_file = "ory-keto-v1alpha1.bazel",
-    strip_prefix = "proto",
+    commit = "3099ead2ef569e889e47c04204337639c89b1bf8",
+    remote = "https://github.com/ory/keto.git",
     shallow_since = "1624432697 +0000",
+    strip_prefix = "proto",
 )
 
 ################################################################################
@@ -468,22 +478,41 @@ http_archive(
 
 http_archive(
     name = "com_github_jbeder_yaml_cpp",
-    urls = ["https://github.com/jbeder/yaml-cpp/archive/a6bbe0e50ac4074f0b9b44188c28cf00caf1a723.zip"],
-    strip_prefix = "yaml-cpp-a6bbe0e50ac4074f0b9b44188c28cf00caf1a723/",
     sha256 = "03d214d71b8bac32f684756003eb47a335fef8f8152d0894cf06e541eaf1c7f4",
+    strip_prefix = "yaml-cpp-a6bbe0e50ac4074f0b9b44188c28cf00caf1a723/",
+    urls = ["https://github.com/jbeder/yaml-cpp/archive/a6bbe0e50ac4074f0b9b44188c28cf00caf1a723.zip"],
 )
 
 http_archive(
     name = "com_google_googletest",
-    urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"],
-    strip_prefix = "googletest-release-1.11.0/",
     sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    strip_prefix = "googletest-release-1.11.0/",
+    urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"],
 )
 
 http_archive(
     name = "com_github_boostorg_optional",
-    urls = ["https://github.com/boostorg/optional/archive/refs/tags/optional-2021-03-10.zip"],
-    strip_prefix = "/optional-optional-2021-03-10/",
     build_file = "@yggdrasil//:third_party/BUILD.com_github_boostorg_optional",
     sha256 = "39b43ba64d67da7e5a34871bfcdd9b3a1d88e943514fc2d4c7d5c9cc2b0c0355",
+    strip_prefix = "/optional-optional-2021-03-10/",
+    urls = ["https://github.com/boostorg/optional/archive/refs/tags/optional-2021-03-10.zip"],
 )
+
+################################################################################
+# Rust Dependencies
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "rules_rust",
+    sha256 = "224ebaf1156b6f2d3680e5b8c25191e71483214957dfecd25d0f29b2f283283b",
+    strip_prefix = "rules_rust-a814d859845c420fd105c629134c4a4cb47ba3f8",
+    urls = [
+        # `main` branch as of 2021-06-15
+        "https://github.com/bazelbuild/rules_rust/archive/a814d859845c420fd105c629134c4a4cb47ba3f8.tar.gz",
+    ],
+)
+
+load("@rules_rust//rust:repositories.bzl", "rust_repositories")
+
+rust_repositories()
