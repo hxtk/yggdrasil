@@ -17,8 +17,13 @@ type key int
 
 var zedTokenKey key
 
+// Registrar is an interface for associating rpcs with their authorization metadata.
 type Registrar interface {
-	RegisterPermissions(perms map[string]*v1alpha1.PermissionsRule)
+	// RegisterPermission associates an rpc with a resource type and required permission.
+	//
+	// Implementors SHALL accept repeated calls, including repeated calls with the same
+	// value for `rpc`, in which case the last call wins.
+	RegisterPermission(rpc string, perm *v1alpha1.PermissionsRule)
 }
 
 // ResourceAuthorizer is a resource-oriented authorization interceptor.
@@ -51,15 +56,19 @@ type ResourceAuthorizer struct {
 	rpcPermissions map[string]*v1alpha1.PermissionsRule
 }
 
-func (ra *ResourceAuthorizer) RegisterPermissions(perms map[string]*v1alpha1.PermissionsRule) {
+var _ Registrar = new(ResourceAuthorizer)
+
+// RegisterPermission implements Registrar for *ResourceAuthorizer.
+//
+// This method may be invoked arbitrarily many times, however it is not thread-safe
+// and should therefore not be invoked concurrently, nor should it be invoked after
+// `ra`'s interceptors are in use by a listening `grpc.Server`.
+func (ra *ResourceAuthorizer) RegisterPermission(rpc string, perm *v1alpha1.PermissionsRule) {
 	if ra.rpcPermissions == nil {
-		ra.rpcPermissions = perms
-		return
+		ra.rpcPermissions = make(map[string]*v1alpha1.PermissionsRule)
 	}
 
-	for k, v := range perms {
-		ra.rpcPermissions[k] = v
-	}
+	ra.rpcPermissions[rpc] = perm
 }
 
 // UnaryServerInterceptor returns an interceptor for checking authorization.

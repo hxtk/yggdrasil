@@ -41,23 +41,22 @@ func generatePermCheckMethods(g *protogen.GeneratedFile) {
 	g.P(`return nil, `, fmtPackage.Ident("Errorf"), `("no permissions found for method %s", method)`)
 	g.P(`}`)
 	g.P()
-	g.P(`func PermissionsMap() map[string]*`, v1alpha1Package.Ident("PermissionsRule"), ` {`)
-	g.P(`res := make(map[string]*`, v1alpha1Package.Ident("PermissionsRule"), `, len(resourcePermissions_ALL))`)
-	g.P(`for k, v := range resourcePermissions_ALL {`)
-	g.P(`res[k] = `, protoPackage.Ident(`Clone`), `(v).(*`, v1alpha1Package.Ident("PermissionsRule"), `)`)
-	g.P(`}`)
-	g.P(`return res`)
-	g.P(`}`)
-	g.P()
 }
 
 func generateRegisterMethods(g *protogen.GeneratedFile, file *descriptorpb.FileDescriptorProto) {
 	for _, service := range file.GetService() {
+		genRegisterComment(g, service)
 		g.P(`func Register`, service.GetName(), `Permissions(reg `, authzPackage.Ident(`Registrar`), `) {`)
-		g.P(`reg.RegisterPermissions(resourcePermissions_`, service.GetName(), `)`)
+		g.P(`for k, v := range resourcePermissions_`, service.GetName(), `{`)
+		g.P(`reg.RegisterPermission(k, v)`)
+		g.P(`}`)
 		g.P(`}`)
 		g.P()
 	}
+}
+
+func genRegisterComment(g *protogen.GeneratedFile, service *descriptorpb.ServiceDescriptorProto) {
+	g.P(`// Register`, service.GetName(), `Permissions registers the static permissions of `, service.GetName(), ` to reg.`)
 }
 
 func generateServicePermissions(g *protogen.GeneratedFile, file *descriptorpb.FileDescriptorProto) {
