@@ -389,6 +389,13 @@ go_repository(
     version = "v1.0.0",
 )
 
+go_repository(
+    name = "com_github_micahparks_keyfunc",
+    importpath = "github.com/MicahParks/keyfunc",
+    sum = "h1:jWNhUVtMchsdYVl714lrZL8On+SKPEvPKC+CpIN7HwE=",
+    version = "v0.10.0",
+)
+
 go_rules_dependencies()
 
 go_register_toolchains(version = "1.16")
