@@ -36,7 +36,7 @@ import (
 
 	"github.com/hxtk/yggdrasil/common/config/postgres"
 	"github.com/hxtk/yggdrasil/common/config/tlsconfig"
-	"github.com/hxtk/yggdrasil/common/grpc/server"
+	"github.com/hxtk/yggdrasil/common/server"
 	"github.com/hxtk/yggdrasil/toolproxy/server/pkg/rpc"
 )
 

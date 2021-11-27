@@ -3,7 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "go_default_library",
     srcs = glob(["*.go"], exclude=["*_test.go"]),
-    importpath = "github.com/hxtk/yggdrasil/common/grpc/server",
+    importpath = "github.com/hxtk/yggdrasil/common/server",
     deps = [
         "//common/authn:go_default_library",
         "//common/authz:go_default_library",

@@ -7,7 +7,7 @@ go_library(
     deps = [
         "//common/urn:go_default_library",
         "//common/authz:go_default_library",
-	"//common/grpc/server:go_default_library",
+	"//common/server:go_default_library",
 	"//toolproxy/v1:go_default_library",
 	"@org_golang_google_protobuf//types/known/timestamppb:go_default_library",
 	"@com_github_lib_pq//:go_default_library",

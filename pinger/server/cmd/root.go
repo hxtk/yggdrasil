@@ -32,7 +32,7 @@ import (
 	fastping "github.com/tatsushid/go-fastping"
 
 	"github.com/hxtk/yggdrasil/common/config/tlsconfig"
-	"github.com/hxtk/yggdrasil/common/grpc/server"
+	"github.com/hxtk/yggdrasil/common/server"
 )
 
 var cfgFile string

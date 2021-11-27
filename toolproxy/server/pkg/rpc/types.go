@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hxtk/yggdrasil/common/authz"
-	"github.com/hxtk/yggdrasil/common/grpc/server"
+	"github.com/hxtk/yggdrasil/common/server"
 	pb "github.com/hxtk/yggdrasil/toolproxy/v1"
 )
 

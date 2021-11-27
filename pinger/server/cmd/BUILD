@@ -7,7 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//common/config/tlsconfig:go_default_library",
-        "//common/grpc/server:go_default_library",
+        "//common/server:go_default_library",
 	"@com_github_sirupsen_logrus//:go_default_library",
         "@com_github_spf13_cobra//:cobra",
         "@com_github_spf13_viper//:viper",
