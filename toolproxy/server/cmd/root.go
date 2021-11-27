@@ -66,6 +66,7 @@ to quickly create a Cobra application.`,
 		}
 		rpcServer := rpc.New(db)
 		s.Register(rpcServer)
+		log.Info("Registration complete.")
 
 		addr := viper.GetString("grpc.addr")
 		lis, err := net.Listen("tcp", addr)
@@ -78,8 +79,9 @@ to quickly create a Cobra application.`,
 		}
 
 		var wg sync.WaitGroup
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
+			log.Info("gRPC server started.")
 			err := s.ServeGRPC(lis)
 			if err != nil {
 				log.WithError(err).Fatal("gRPC listener returned error.")
@@ -96,8 +98,9 @@ to quickly create a Cobra application.`,
 			lis = tls.NewListener(lis, tlsConfig)
 		}
 
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
+			log.Info("HTTP server started.")
 			err := http.Serve(lis, s)
 			if err != nil {
 				log.WithError(err).Fatal("http listener returned error.")
@@ -106,6 +109,7 @@ to quickly create a Cobra application.`,
 		}()
 
 		wg.Wait()
+		log.Info("Servers shut down.")
 	},
 }
 
