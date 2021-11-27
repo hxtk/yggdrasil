@@ -6,12 +6,32 @@ option go_package = "github.com/hxtk/yggdrasil/common/authz/v1alpha1";
 
 import "google/protobuf/descriptor.proto";
 
+// PermissionsRule is an encoding of the Resource Namespace of an operand
+// to a method and a permission needed to invoke that method on the
+// specified operand.
+//
+// PermissionRules may be specified as an option on a Service or a Method.
+//
+// Example:
+//
+//    service Foo {
+//        rpc GetBar(GetBarRequest) returns (Bar) {
+//            option (yggdrasil.authz.permissions) = {
+//                resource_type: "bars"
+//                permission: "read"
+//            };
+//        }
+//        
+//    }
 message PermissionsRule {
 	string resource_type = 1;
 	string permission = 2;
 }
 
 extend google.protobuf.MethodOptions {
+	// TODO: Claim an extension number with the Global Extension Registry
+	// before making first release
+	// https://github.com/protocolbuffers/protobuf/blob/master/docs/options.md
 	PermissionsRule permissions = 3587251;
 }
 
