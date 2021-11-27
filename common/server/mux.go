@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/hxtk/yggdrasil/common/authz"
 )
@@ -86,6 +87,7 @@ func New() *Server {
 			grpc_prometheus.StreamServerInterceptor,
 		),
 	)
+	reflection.Register(grpcServer)
 
 	gwMux := runtime.NewServeMux()
 	mux := http.NewServeMux()

@@ -68,40 +68,39 @@ to quickly create a Cobra application.`,
 		s.Register(rpcServer)
 		log.Info("Registration complete.")
 
-		addr := viper.GetString("grpc.addr")
-		lis, err := net.Listen("tcp", addr)
-		if err != nil {
-			log.WithError(err).WithField("addr", addr).Fatal("Cannot open grpc listener.")
-		}
-
-		if viper.GetBool("tls.enabled") {
-			lis = tls.NewListener(lis, tlsConfig)
-		}
-
 		var wg sync.WaitGroup
 		wg.Add(1)
 		go func() {
-			log.Info("gRPC server started.")
-			err := s.ServeGRPC(lis)
+			addr := viper.GetString("grpc.addr")
+			lis, err := net.Listen("tcp", addr)
+			if err != nil {
+				log.WithError(err).WithField("addr", addr).Fatal("Cannot open grpc listener.")
+			}
+
+			if viper.GetBool("tls.enabled") {
+				lis = tls.NewListener(lis, tlsConfig)
+			}
+			log.Infof("gRPC server started on %v.", lis.Addr())
+			err = s.ServeGRPC(lis)
 			if err != nil {
 				log.WithError(err).Fatal("gRPC listener returned error.")
 			}
 			wg.Done()
 		}()
 
-		lis, err = net.Listen("tcp", viper.GetString("http.addr"))
-		if err != nil {
-			log.WithError(err).WithField("addr", addr).Fatal("Cannot open http listener.")
-		}
-
-		if viper.GetBool("tls.enabled") {
-			lis = tls.NewListener(lis, tlsConfig)
-		}
-
 		wg.Add(1)
 		go func() {
-			log.Info("HTTP server started.")
-			err := http.Serve(lis, s)
+			addr := viper.GetString("http.addr")
+			lis, err := net.Listen("tcp", addr)
+			if err != nil {
+				log.WithError(err).WithField("addr", addr).Fatal("Cannot open http listener.")
+			}
+
+			if viper.GetBool("tls.enabled") {
+				lis = tls.NewListener(lis, tlsConfig)
+			}
+			log.Infof("HTTP server started on %v.", lis.Addr())
+			err = http.Serve(lis, s)
 			if err != nil {
 				log.WithError(err).Fatal("http listener returned error.")
 			}
