@@ -10,6 +10,7 @@ import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "common/authz/v1alpha1/annotations.proto";
 
 enum Status {
 	// Setinel value; the command status is undefined.
@@ -83,12 +84,20 @@ service ToolProxy {
 		option (google.api.http) = {
 			get: "/v1/commands"
 		};
+		option (yggdrasil.authz.permissions) = {
+			resource_type: "commands"
+			permission: "list"
+		};
 	};
 
 	rpc CreateCommand(CreateCommandRequest) returns (Command) {
 		option (google.api.http) = {
 			post: "/v1/commands"
 			body: "command"
+		};
+		option (yggdrasil.authz.permissions) = {
+			resource_type: "commands"
+			permission: "create"
 		};
 	};
 
@@ -97,6 +106,10 @@ service ToolProxy {
 		option (google.api.http) = {
 			get: "/v1/{name=commands/*}"
 		};
+		option (yggdrasil.authz.permissions) = {
+			resource_type: "commands"
+			permission: "read"
+		};
 	};
 
 	// Alter a command. Note that this will delete all approvals on the command.
@@ -104,6 +117,10 @@ service ToolProxy {
 		option (google.api.http) = {
 			patch: "/v1/{name=commands/*}"
 			body: "command"
+		};
+		option (yggdrasil.authz.permissions) = {
+			resource_type: "commands"
+			permission: "edit"
 		};
 	};
 
@@ -123,12 +140,20 @@ service ToolProxy {
 		option (google.api.http) = {
 			post: "/v1/{name=commands/*}:run"
 		};
+		option (yggdrasil.authz.permissions) = {
+			resource_type: "commands"
+			permission: "execute"
+		};
 	};
 
 	// Cancel a command if it has not been scheduled or run yet. Otherwise, return an error.
 	rpc DeleteCommand(DeleteCommandRequest) returns (Command) {
 		option (google.api.http) = {
 			delete: "/v1/{name=commands/*}"
+		};
+		option (yggdrasil.authz.permissions) = {
+			resource_type: "commands"
+			permission: "delete"
 		};
 	};
 }

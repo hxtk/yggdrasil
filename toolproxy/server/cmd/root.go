@@ -58,7 +58,7 @@ to quickly create a Cobra application.`,
 			log.WithError(err).Fatal("Error reading TLS Config")
 		}
 
-		s := server.New(tlsConfig)
+		s := server.New()
 
 		db, err := postgres.FromViper(viper.GetViper())
 		if err != nil {

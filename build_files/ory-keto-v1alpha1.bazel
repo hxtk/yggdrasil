@@ -1,0 +1,35 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@com_github_grpc_grpc//bazel:cc_grpc_library.bzl", "cc_grpc_library")
+load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
+
+proto_library(
+    name = "acl_proto",
+    srcs = glob(["ory/keto/acl/v1alpha1/*.proto"]),
+    deps = [
+        "@com_google_protobuf//:field_mask_proto",
+        "@com_google_protobuf//:timestamp_proto",
+    ],
+)
+
+go_proto_library(
+    name = "acl_go_proto",
+    compilers = [
+        "@io_bazel_rules_go//proto:go_grpc",
+    ],
+    importpath = "github.com/ory/keto/proto/ory/keto/acl/v1alpha1",
+    proto = ":acl_proto",
+)
+
+cc_proto_library(
+    name = "acl_cc_proto",
+    deps = [":acl_proto"],
+)
+
+cc_grpc_library(
+    name = "acl_cc_grpc",
+    srcs = [":acl_proto"],
+    deps = [":acl_cc_proto"],
+    grpc_only = True,
+)

@@ -368,6 +368,27 @@ go_repository(
     version = "v0.0.0-20160109021039-d7bb493dee3e",
 )
 
+go_repository(
+    name = "org_golang_google_genproto",
+    importpath = "google.golang.org/genproto",
+    sum = "h1:b9mVrqYfq3P4bCdaLg1qtBnPzUYgglsIdjZkL/fQVOE=",
+    version = "v0.0.0-20211118181313-81c1377c94b1",
+)
+
+go_repository(
+    name = "com_github_google_uuid",
+    importpath = "github.com/google/uuid",
+    sum = "h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=",
+    version = "v1.3.0",
+)
+
+go_repository(
+    name = "com_github_inconshreveable_mousetrap",
+    importpath = "github.com/inconshreveable/mousetrap",
+    sum = "h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=",
+    version = "v1.0.0",
+)
+
 go_rules_dependencies()
 
 go_register_toolchains(version = "1.16")
@@ -417,31 +438,43 @@ container_pull(
 ################################################################################
 # gRPC C++ Rules
 
-git_repository(
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "io_bazel_rules_python",
+    sha256 = "cd6730ed53a002c56ce4e2f396ba3b3be262fd7cb68339f0377a45e8227fe332",
+    url = "https://github.com/bazelbuild/rules_python/releases/download/0.5.0/rules_python-0.5.0.tar.gz",
+)
+
+http_archive(
     name = "com_github_grpc_grpc",
-    commit = "96b73272eadc01afb5fb45b92b408c47e4387274",
-    remote = "https://github.com/grpc/grpc.git",
+    sha256 = "b2f2620c762427bfeeef96a68c1924319f384e877bc0e084487601e4cc6e434c",
+    strip_prefix = "grpc-1.42.0",
+    urls = [
+        "https://github.com/grpc/grpc/archive/v1.42.0.tar.gz",
+    ],
 )
 
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 
 grpc_deps()
 
-# Extra deps are needed too. See https://github.com/grpc/grpc/issues/22436.
 load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
 
 grpc_extra_deps()
 
-load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
+load("@rules_python//python/legacy_pip_import:pip.bzl", "pip_import")
 
 pip_import(
     name = "grpc_python_dependencies",
     requirements = "@com_github_grpc_grpc//:requirements.bazel.txt",
 )
 
-load("@grpc_python_dependencies//:requirements.bzl", "pip_install")
+load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories")
 
 pip_repositories()
+
+load("@grpc_python_dependencies//:requirements.bzl", "pip_install")
 
 pip_install()
 
@@ -452,11 +485,31 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
 
 new_git_repository(
     name = "ory_keto_v1alpha1",
-    build_file = "ory-keto-v1alpha1.bazel",
+    build_file = "//build_files:ory-keto-v1alpha1.bazel",
     commit = "3099ead2ef569e889e47c04204337639c89b1bf8",
     remote = "https://github.com/ory/keto.git",
     shallow_since = "1624432697 +0000",
     strip_prefix = "proto",
+)
+
+################################################################################
+# protoc-gen-validate
+
+http_archive(
+    name = "com_envoyproxy_protoc_gen_validate",
+    strip_prefix = "protoc-gen-validate-0.6.2",
+    url = "https://github.com/envoyproxy/protoc-gen-validate/archive/refs/tags/v0.6.2.tar.gz",
+)
+
+################################################################################
+# Authzed SpiceDB client APIs
+
+new_git_repository(
+    name = "com_authzed_api",
+    build_file = "//build_files:com_authzed_api.bazel",
+    commit = "29e93779606dac06b0eef40a8bc3e10c5267c552",
+    remote = "https://github.com/authzed/api.git",
+    shallow_since = "1637166970 -0500",
 )
 
 ################################################################################
@@ -492,7 +545,7 @@ http_archive(
 
 http_archive(
     name = "com_github_boostorg_optional",
-    build_file = "@yggdrasil//:third_party/BUILD.com_github_boostorg_optional",
+    build_file = "@yggdrasil//:build_files/com_github_boostorg_optional.bzl",
     sha256 = "39b43ba64d67da7e5a34871bfcdd9b3a1d88e943514fc2d4c7d5c9cc2b0c0355",
     strip_prefix = "/optional-optional-2021-03-10/",
     urls = ["https://github.com/boostorg/optional/archive/refs/tags/optional-2021-03-10.zip"],

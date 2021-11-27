@@ -1,0 +1,13 @@
+
+message PermissionsRule {
+	string resource_type = 1;
+	string permission = 2;
+}
+
+extend google.protobuf.MethodOptions {
+	PermissionsRule permissions = 3587251;
+}
+
+extend google.protobuf.ServiceOptions {
+	PermissionsRule default_permissions = 3587251;
+}

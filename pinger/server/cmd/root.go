@@ -53,7 +53,7 @@ to quickly create a Cobra application.`,
 			log.WithError(err).Fatal("Error reading TLS Config")
 		}
 
-		s := server.New(tlsConfig)
+		s := server.New()
 
 		p := fastping.NewPinger()
 		p.MaxRTT = time.Minute

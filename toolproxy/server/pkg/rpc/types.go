@@ -5,6 +5,7 @@ import (
 
 	"google.golang.org/grpc"
 
+	"github.com/hxtk/yggdrasil/common/authz"
 	"github.com/hxtk/yggdrasil/common/grpc/server"
 	pb "github.com/hxtk/yggdrasil/toolproxy/v1"
 )
@@ -20,14 +21,13 @@ func New(db *sql.DB) *Server {
 	}
 }
 
-func (s *Server) Register(g *grpc.Server) {
+func (s *Server) Register(g *grpc.Server, az authz.Registrar) {
 	pb.RegisterToolProxyServer(g, s)
+	pb.RegisterToolProxyPermissions(az)
 }
 
 // Type assertion that Server must implement ToolProxyServer.
 var _ pb.ToolProxyServer = new(Server)
 
+// Type assertion that Server must implement server.Registrar.
 var _ server.Registrar = new(Server)
-
-// Type assertion that Server must implement ToolProxyServer.
-//var _ pb.FilesystemServer = new(Server)
