@@ -19,10 +19,10 @@ type key int
 var identityKey key
 
 type Identity struct {
-	Name     string
-	UserType string
-	ID       uuid.UUID
-	Subject  *pb.SubjectReference
+	DisplayName string
+	UserType    string
+	ID          uuid.UUID
+	Subject     *pb.SubjectReference
 }
 
 func IdentityFromContext(ctx context.Context) (*Identity, error) {
@@ -33,6 +33,24 @@ func IdentityFromContext(ctx context.Context) (*Identity, error) {
 	return id, nil
 }
 
+// TLSAuth is a grpc_auth.AuthFunc for authenticating clients with mutual TLS.
+//
+// In order to be used, a client certificate must have a URI SAN which refers to
+// their object reference in the authorization database. For example:
+//
+//     discord/users:0cf4934c-8583-4406-a9d8-b2ee88a8c0f9
+//     discord/bots:0cf4934c-8583-4406-a9d8-b2ee88a8c0f9
+//     users:0cf4934c-8583-4406-a9d8-b2ee88a8c0f9
+//     service-accounts:0cf4934c-8583-4406-a9d8-b2ee88a8c0f9
+//
+// While it is recommended that Client IDs be UUIDs, this is not a requirement.
+// For detailed documentation of the specifications for these fields, see [1]
+// and understand that the expected format is `object_type ':' object_id`, i.e.,
+// the two fields concatenated together with a colon (`:`).
+//
+// The Certificate's Common Name is used as a display name
+//
+// [1]: https://github.com/authzed/api/blob/main/authzed/api/v1/core.proto#L38
 func TLSAuth(ctx context.Context) (context.Context, error) {
 	p, ok := peer.FromContext(ctx)
 	if !ok {
