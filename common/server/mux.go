@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
@@ -16,6 +17,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/hxtk/yggdrasil/common/authn"
 	"github.com/hxtk/yggdrasil/common/authz"
 )
 
@@ -77,14 +79,15 @@ func New() *Server {
 			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
 			grpc_logrus.UnaryServerInterceptor(logrusEntry),
 			grpc_prometheus.UnaryServerInterceptor,
-			grpc_validator.UnaryServerInterceptor(),
+			grpc_auth.UnaryServerInterceptor(authn.TLSAuth),
 			resourceAuthz.UnaryServerInterceptor(),
+			grpc_validator.UnaryServerInterceptor(),
 		),
 		grpc_middleware.WithStreamServerChain(
-			grpc_validator.StreamServerInterceptor(),
 			grpc_ctxtags.StreamServerInterceptor(),
 			grpc_logrus.StreamServerInterceptor(logrusEntry),
 			grpc_prometheus.StreamServerInterceptor,
+			grpc_validator.StreamServerInterceptor(),
 		),
 	)
 	reflection.Register(grpcServer)

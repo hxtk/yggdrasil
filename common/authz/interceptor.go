@@ -30,7 +30,8 @@ type Registrar interface {
 //
 // It is designed to work with resource-oriented gRPC APIs compliant with
 // Google's Resource-Oriente API Design Guide [1]. In particular, request
-// types intended to be used with this interceptor MUST include either a
+// types intended to be used with this interceptor MUST specify a resource
+// ID (where applicable) in either a
 // `name` or `parent` field. Operations on existing resources SHOULD
 // use the `name` field to uniquely identify the specific operand resource,
 // but operations which create a resource MAY alternatively use a `parent`
@@ -110,12 +111,7 @@ func (ra *ResourceAuthorizer) UnaryServerInterceptor() grpc.UnaryServerIntercept
 				ObjectId:   name,
 			},
 			Permission: perms.GetPermission(),
-			Subject: &pb.SubjectReference{
-				Object: &pb.ObjectReference{
-					ObjectType: "users",
-					ObjectId:   identity.UserID.String(),
-				},
-			},
+			Subject:    identity.Subject,
 		})
 
 		if err != nil {
@@ -145,7 +141,7 @@ func getResourceName(req interface{}) (string, error) {
 	case parenter:
 		return v.GetParent(), nil
 	default:
-		return "", status.Error(codes.Internal, "Could not determine resource name from request.")
+		return "__root__", nil
 	}
 }
 

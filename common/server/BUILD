@@ -13,6 +13,7 @@ go_library(
 	"@com_github_sirupsen_logrus//:go_default_library",
 	"@com_github_soheilhy_cmux//:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//:go_default_library",
+	"@com_github_grpc_ecosystem_go_grpc_middleware//auth:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//logging/logrus:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//tags:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//validator:go_default_library",
