@@ -79,13 +79,16 @@ message Command {
 }
 
 service ToolProxy {
+	option (yggdrasil.authz.default_permissions) = {
+		resource_type: "commands",
+	};
+
 	// List commands which have been issued against this proxy instance.
 	rpc ListCommands(ListCommandsRequest) returns (ListCommandsResponse) {
 		option (google.api.http) = {
 			get: "/v1/commands"
 		};
 		option (yggdrasil.authz.permissions) = {
-			resource_type: "commands"
 			permission: "list"
 		};
 	};
@@ -96,7 +99,6 @@ service ToolProxy {
 			body: "command"
 		};
 		option (yggdrasil.authz.permissions) = {
-			resource_type: "commands"
 			permission: "create"
 		};
 	};
@@ -107,7 +109,6 @@ service ToolProxy {
 			get: "/v1/{name=commands/*}"
 		};
 		option (yggdrasil.authz.permissions) = {
-			resource_type: "commands"
 			permission: "read"
 		};
 	};
@@ -119,7 +120,6 @@ service ToolProxy {
 			body: "command"
 		};
 		option (yggdrasil.authz.permissions) = {
-			resource_type: "commands"
 			permission: "edit"
 		};
 	};
@@ -141,7 +141,6 @@ service ToolProxy {
 			post: "/v1/{name=commands/*}:run"
 		};
 		option (yggdrasil.authz.permissions) = {
-			resource_type: "commands"
 			permission: "execute"
 		};
 	};
@@ -152,7 +151,6 @@ service ToolProxy {
 			delete: "/v1/{name=commands/*}"
 		};
 		option (yggdrasil.authz.permissions) = {
-			resource_type: "commands"
 			permission: "delete"
 		};
 	};

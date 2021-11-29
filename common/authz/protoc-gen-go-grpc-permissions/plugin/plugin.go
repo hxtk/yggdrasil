@@ -60,31 +60,21 @@ func genRegisterComment(g *protogen.GeneratedFile, service *descriptorpb.Service
 }
 
 func generateServicePermissions(g *protogen.GeneratedFile, file *descriptorpb.FileDescriptorProto) {
-
 	for _, service := range file.GetService() {
 		g.P(`var resourcePermissions_`, service.GetName(), ` = map[string]*`, v1alpha1Package.Ident("PermissionsRule{"))
 		servicePerm, _ := extractServiceAPIOptions(service)
 		for _, method := range service.GetMethod() {
 			perm, err := extractMethodAPIOptions(method)
-			if err != nil && servicePerm == nil {
+			if err != nil && service == nil {
 				continue
 			}
-
 			fullMethodName := fmt.Sprintf(
 				"/%s.%s/%s",
 				file.GetPackage(),
 				service.GetName(),
 				method.GetName(),
 			)
-			g.P(`"`, fullMethodName, `": {`)
-			if perm != nil {
-				g.P(`ResourceType: "`, perm.GetResourceType(), `",`)
-				g.P(`Permission:   "`, perm.GetPermission(), `",`)
-			} else {
-				g.P(`ResourceType: "`, servicePerm.GetResourceType(), `",`)
-				g.P(`Permission:   "`, servicePerm.GetPermission(), `",`)
-			}
-			g.P(`},`)
+			genMethodPerms(g, fullMethodName, perm, servicePerm)
 		}
 		g.P(`}`)
 		g.P()
@@ -99,30 +89,41 @@ func generateUnifiedPermissions(g *protogen.GeneratedFile, file *descriptorpb.Fi
 		servicePerm, _ := extractServiceAPIOptions(service)
 		for _, method := range service.GetMethod() {
 			perm, err := extractMethodAPIOptions(method)
-			if err != nil && servicePerm == nil {
+			if err != nil && service == nil {
 				continue
 			}
-
 			fullMethodName := fmt.Sprintf(
 				"/%s.%s/%s",
 				file.GetPackage(),
 				service.GetName(),
 				method.GetName(),
 			)
-			g.P(`"`, fullMethodName, `": {`)
-			if perm != nil {
-				g.P(`ResourceType: "`, perm.GetResourceType(), `",`)
-				g.P(`Permission:   "`, perm.GetPermission(), `",`)
-			} else {
-				g.P(`ResourceType: "`, servicePerm.GetResourceType(), `",`)
-				g.P(`Permission:   "`, servicePerm.GetPermission(), `",`)
-			}
-			g.P(`},`)
+			genMethodPerms(g, fullMethodName, perm, servicePerm)
 		}
 	}
 	g.P(`}`)
 	g.P()
 
+}
+
+func genMethodPerms(g *protogen.GeneratedFile, name string, method, service *v1alpha1.PermissionsRule) {
+	perm := mergePerms(service, method)
+
+	g.P(`"`, name, `": {`)
+	g.P(`ResourceType: "`, perm.GetResourceType(), `",`)
+	g.P(`Permission:   "`, perm.GetPermission(), `",`)
+	g.P(`},`)
+}
+
+func mergePerms(service, method *v1alpha1.PermissionsRule) *v1alpha1.PermissionsRule {
+	if service == nil {
+		return method
+	}
+
+	res := proto.Clone(service).(*v1alpha1.PermissionsRule)
+	proto.Merge(res, method)
+
+	return res
 }
 
 func genGeneratedHeader(gen *protogen.Plugin, g *protogen.GeneratedFile) {

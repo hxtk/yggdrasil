@@ -5,6 +5,7 @@ go_library(
     srcs = glob(["*.go"], exclude=["*_test.go"]),
     importpath = "github.com/hxtk/yggdrasil/common/authn",
     deps = [
+	"@com_authzed_api//:v1_go_proto",
         "@com_github_google_uuid//:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//auth:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//:go_default_library",

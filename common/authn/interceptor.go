@@ -3,6 +3,8 @@ package authn
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"regexp"
 
 	pb "github.com/authzed/authzed-go/proto/authzed/api/v1"
 	"github.com/google/uuid"
@@ -79,8 +81,8 @@ func TLSAuth(ctx context.Context) (context.Context, error) {
 		return ctx, nil
 	}
 	return context.WithValue(ctx, identityKey, &Identity{
-		Name:    userName,
-		Subject: subject,
+		DisplayName: userName,
+		Subject:     subject,
 	}), nil
 }
 
@@ -95,7 +97,7 @@ var objectRefRegex *regexp.Regexp
 func getUserURI(uris []*url.URL) (*pb.SubjectReference, error) {
 	for _, v := range uris {
 		if v.Opaque == "" {
-			if matches := objectRefRegex.FindSubMatch([]byte(v.Path)); matches != nil {
+			if matches := objectRefRegex.FindSubmatch([]byte(v.Path)); matches != nil {
 				return &pb.SubjectReference{
 					Object: &pb.ObjectReference{
 						ObjectType: string(matches[1]),
