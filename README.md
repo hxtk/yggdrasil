@@ -5,7 +5,7 @@
 The Yggdrasil Platform is intended to be a self-managing
 high-availability infrastructure platform that can be easily
 bootstrapped on any collection of servers, providing the
-tools necessary for developers targetting the platform to
+tools necessary for developers targeting the platform to
 design and build applications that are secure by default.
 
 This security will descend from the security of the platform
