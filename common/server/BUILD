@@ -11,7 +11,6 @@ go_library(
 	"@org_golang_google_grpc//:go_default_library",
 	"@org_golang_google_grpc//reflection:go_default_library",
 	"@com_github_sirupsen_logrus//:go_default_library",
-	"@com_github_soheilhy_cmux//:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//auth:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//logging/logrus:go_default_library",

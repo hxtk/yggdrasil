@@ -9,7 +9,6 @@ proto_library(
         "@com_google_googleapis//google/api:annotations_proto",
         "@com_google_protobuf//:field_mask_proto",
         "@com_google_protobuf//:timestamp_proto",
-	"@com_github_mwitkow_go_proto_validators//:validator_proto",
 	"//common/authz/v1alpha1:annotations_proto",
     ],
 )
@@ -19,14 +18,13 @@ go_proto_library(
     compilers = [
         "@io_bazel_rules_go//proto:go_grpc",
         "@com_github_grpc_ecosystem_grpc_gateway//protoc-gen-grpc-gateway:go_gen_grpc_gateway",
-	"@com_github_mwitkow_go_proto_validators//:go_proto_validators",
 	"//common/authz/protoc-gen-go-grpc-permissions:go_proto_permissions",
     ],
     importpath = "github.com/hxtk/yggdrasil/toolproxy/v1",
     proto = ":command_proto",
     deps = [
         "@com_google_googleapis//google/api:annotations_go_proto",
-	"@com_github_mwitkow_go_proto_validators//:validators_golang",
+	"@io_bazel_rules_go//proto/wkt:timestamp_go_proto",
 	"//common/authz/v1alpha1:go_default_library",
         "//common/authz:go_default_library",
     ],

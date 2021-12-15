@@ -9,7 +9,6 @@ import "google/protobuf/timestamp.proto";
 
 import "google/api/annotations.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "common/authz/v1alpha1/annotations.proto";
 
 enum Status {
@@ -39,7 +38,7 @@ enum Status {
 // A command to be executed by the tool proxy.
 message Command {
 	// A unique identifier of the command. This ID should be considered opaque.
-	string name = 1 [(validator.field) = {regex: "^(commands/[^/]+$)?"}];
+	string name = 1;
 
 	// The user who issued the command
 	string issuer = 2;
@@ -48,13 +47,13 @@ message Command {
 	//
 	// Example:
 	//    echo foo bar -> ["echo", "foo", "bar"]
-	repeated string argv = 3 [(validator.field) = {repeated_count_min: 1}];
+	repeated string argv = 3;
 
 	// A short description of what the command is intended to accomplish.
 	string description = 4;
 
 	// The status of the command execution request.
-	Status status = 5 [(validator.field) = {is_in_enum: true}];
+	Status status = 5;
 
 	// Standard Output of the command, if it has completed.
 	bytes std_out = 6;
@@ -79,7 +78,7 @@ message Command {
 }
 
 service ToolProxy {
-	option (yggdrasil.authz.default_permissions) = {
+	option (yggdrasil.api.authz.v1alpha1.default_permissions) = {
 		resource_type: "commands",
 	};
 
@@ -88,7 +87,7 @@ service ToolProxy {
 		option (google.api.http) = {
 			get: "/v1/commands"
 		};
-		option (yggdrasil.authz.permissions) = {
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
 			permission: "list"
 		};
 	};
@@ -98,7 +97,7 @@ service ToolProxy {
 			post: "/v1/commands"
 			body: "command"
 		};
-		option (yggdrasil.authz.permissions) = {
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
 			permission: "create"
 		};
 	};
@@ -108,7 +107,7 @@ service ToolProxy {
 		option (google.api.http) = {
 			get: "/v1/{name=commands/*}"
 		};
-		option (yggdrasil.authz.permissions) = {
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
 			permission: "read"
 		};
 	};
@@ -119,7 +118,7 @@ service ToolProxy {
 			patch: "/v1/{name=commands/*}"
 			body: "command"
 		};
-		option (yggdrasil.authz.permissions) = {
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
 			permission: "edit"
 		};
 	};
@@ -140,7 +139,7 @@ service ToolProxy {
 		option (google.api.http) = {
 			post: "/v1/{name=commands/*}:run"
 		};
-		option (yggdrasil.authz.permissions) = {
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
 			permission: "execute"
 		};
 	};
@@ -150,7 +149,7 @@ service ToolProxy {
 		option (google.api.http) = {
 			delete: "/v1/{name=commands/*}"
 		};
-		option (yggdrasil.authz.permissions) = {
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
 			permission: "delete"
 		};
 	};
@@ -192,19 +191,19 @@ message CreateCommandRequest {
 }
 
 message GetCommandRequest {
-	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
+	string name = 1;
 }
 
 message RunCommandRequest {
-	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
+	string name = 1;
 }
 
 message UpdateCommandRequest {
-	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
+	string name = 1;
 	Command command = 2;
 	google.protobuf.FieldMask update_mask = 3;
 }
 
 message DeleteCommandRequest {
-	string name = 1 [(validator.field) = {regex: "^commands/[^/]+$"}];
+	string name = 1;
 }
