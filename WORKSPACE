@@ -183,7 +183,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
 
 new_git_repository(
     name = "ory_keto_v1alpha1",
-    build_file = "//build_files:ory-keto-v1alpha1.bazel",
+    build_file = "//third_party:ory_keto_v1alpha1.bazel",
     commit = "3099ead2ef569e889e47c04204337639c89b1bf8",
     remote = "https://github.com/ory/keto.git",
     shallow_since = "1624432697 +0000",
@@ -204,7 +204,7 @@ http_archive(
 
 new_git_repository(
     name = "com_authzed_api",
-    build_file = "//build_files:com_authzed_api.bazel",
+    build_file = "//third_party:com_authzed_api.bazel",
     commit = "29e93779606dac06b0eef40a8bc3e10c5267c552",
     remote = "https://github.com/authzed/api.git",
     shallow_since = "1637166970 -0500",
@@ -243,7 +243,7 @@ http_archive(
 
 http_archive(
     name = "com_github_boostorg_optional",
-    build_file = "@yggdrasil//:build_files/com_github_boostorg_optional.bzl",
+    build_file = "@yggdrasil//third_party:com_github_boostorg_optional.bzl",
     sha256 = "39b43ba64d67da7e5a34871bfcdd9b3a1d88e943514fc2d4c7d5c9cc2b0c0355",
     strip_prefix = "/optional-optional-2021-03-10/",
     urls = ["https://github.com/boostorg/optional/archive/refs/tags/optional-2021-03-10.zip"],
