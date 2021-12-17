@@ -98,9 +98,9 @@ gazelle_dependencies()
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "95d39fd84ff4474babaf190450ee034d958202043e366b9fc38f438c9e6c3334",
-    strip_prefix = "rules_docker-0.16.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.16.0/rules_docker-v0.16.0.tar.gz"],
+    sha256 = "59536e6ae64359b716ba9c46c39183403b01eabfbd57578e84398b4829ca499a",
+    strip_prefix = "rules_docker-0.22.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.22.0/rules_docker-v0.22.0.tar.gz"],
 )
 
 load(
@@ -127,10 +127,19 @@ load(
 )
 
 container_pull(
-    name = "kubectl_image_base",
-    digest = "sha256:c1b101882e5b94a60282b6793e961920790834d834c3b0d1fc59496b8d3e3ed4",
-    registry = "docker.io",
-    repository = "bitnami/kubectl",
+    name = "distroless_base",
+    digest = "sha256:02f4c952f790848aa6ffee8d241c67e0ac5364931c76a80094348af386076ad4",
+    registry = "gcr.io",
+    tag = "nonroot",
+    repository = "distroless/base-debian11",
+)
+
+container_pull(
+    name = "distroless_static",
+    digest = "sha256:213a6d5205aa1421bd128b0396232a22fbb4eec4cbe510118f665398248f6d9a",
+    registry = "gcr.io",
+    tag = "nonroot",
+    repository = "distroless/static-debian11",
 )
 
 ################################################################################

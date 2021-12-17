@@ -1,6 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@io_bazel_rules_docker//container:container.bzl", "container_layer", "container_image", "container_push")
+load("//tools:anchore.bzl", "grype_test", "syft_sbom")
 
 go_library(
     name = "lib",
@@ -21,6 +22,27 @@ pkg_tar(
     srcs = [":tool-server"],
     extension = "tar.gz",
     package_dir = "/usr/bin",
+)
+
+container_image(
+    name = "tool_server_image",
+    base = "@distroless_static//image",
+    tars = [":tool_server_pkg"],
+)
+
+syft_sbom(
+    name = "tool_server_sbom",
+    image = ":tool_server_image.tar",
+)
+
+grype_test(
+    name = "tool_server_image_vulnerabilities",
+    sbom = ":tool_server_sbom",
+    tags = [
+        "manual",
+        "external",
+        "large",
+    ],
 )
 
 pkg_tar(
