@@ -32,7 +32,7 @@ def _syft_sbom_impl(ctx):
 syft_sbom = rule(
     attrs = {
         "image": attr.label(
-            allow_single_file = True,
+            allow_single_file = [".tar"],
             mandatory = True,
         ),
         "scope": attr.string(
@@ -112,20 +112,40 @@ def _grype_test_impl(ctx):
 _grype_test = rule(
     attrs = {
         "image": attr.label(
-            allow_single_file = True,
+            doc = "A TAR export of the image to be scanned compatible with `docker save`. Overrides `sbom`.",
+            allow_single_file = [".tar"],
             mandatory = False,
         ),
         "sbom": attr.label(
+            doc = "A JSON-fomatted SBOM compatible with the output of Anchore Syft.",
             allow_single_file = True,
             mandatory = False,
         ),
         "fail_on_severity": attr.string(
+            doc = "The test will fail if a CVE of this severity is found. " +
+	        "Defaults to \"low\" for safety so that users do not ignore " +
+                "CVEs by default, but most users will want to choose a higher " +
+                "threshold, or define multiple rules at different thresholds. " +
+		"Allowed values are: negligible, low, medium, high, critical.",
             default = "low",
+	    values = [
+                "negligible",
+                "low",
+                "medium",
+                "high",
+                "critical",
+            ],
         ),
         "scope": attr.string(
+            doc = "Scope of the scan, when an image is provided. See Anchore Grype documentation.",
             default = "Squashed",
+	    values = [
+                "Squashed",
+                "All",
+            ],
         ),
         "config": attr.label(
+            doc = "Not yet implemented.",
             mandatory = False,
             allow_single_file = True,
         ),
@@ -141,7 +161,29 @@ _grype_test = rule(
 )
 
 def grype_test(name, fail_on_severity="low", scope="Squashed", **kwargs):
-    print(kwargs)
+    """Scan a docker image for CVEs.
+
+    Uses Anchore Grype to scan a docker image or Anchore Syft SBOM for
+    known vulnerabilities, and fails if vulnerabilities exceeding a
+    severity threshold are found.
+
+    The user is required to provide 'name' as well as exactly one of
+    'image' or 'sbom'. All other fields have sane defaults.
+
+    Args:
+        name: the name of the label to be created.
+        image: the complete docker image TAR, compatible with `docker save`.
+	sbom: the Anchore Syft SBOM of the image, formatted as JSON. See
+            `syft_sbom` rule above.
+        fail_on_severity: the test built by this target shall fail if any
+            CVE is found at this severity or higher. Defaults to "low",
+            which may produce results that users consider to be false
+            positives.
+        scope: if "Squashed", only scan the effective file system of
+            the final image. If "All", scan every file in each layer,
+            including those that are overwritten or deleted in the final
+            image.
+    """
     _grype_test(
         name = name,
         fail_on_severity = fail_on_severity,

@@ -31,13 +31,13 @@ container_image(
 )
 
 syft_sbom(
-    name = "tool_server_sbom",
+    name = "sbom",
     image = ":tool_server_image.tar",
 )
 
 grype_test(
-    name = "tool_server_image_vulnerabilities",
-    sbom = ":tool_server_sbom",
+    name = "cve_scan",
+    sbom = ":sbom",
     tags = [
         "manual",
         "external",
