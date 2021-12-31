@@ -50,6 +50,7 @@ switched_rules_by_language(
     grpc = True,
 )
 
+
 ################################################################################
 # Golang Rules
 
@@ -130,16 +131,16 @@ container_pull(
     name = "distroless_base",
     digest = "sha256:02f4c952f790848aa6ffee8d241c67e0ac5364931c76a80094348af386076ad4",
     registry = "gcr.io",
-    tag = "nonroot",
     repository = "distroless/base-debian11",
+    tag = "nonroot",
 )
 
 container_pull(
     name = "distroless_static",
     digest = "sha256:213a6d5205aa1421bd128b0396232a22fbb4eec4cbe510118f665398248f6d9a",
     registry = "gcr.io",
-    tag = "nonroot",
     repository = "distroless/static-debian11",
+    tag = "nonroot",
 )
 
 ################################################################################
@@ -169,21 +170,6 @@ grpc_deps()
 load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
 
 grpc_extra_deps()
-
-load("@rules_python//python/legacy_pip_import:pip.bzl", "pip_import")
-
-pip_import(
-    name = "grpc_python_dependencies",
-    requirements = "@com_github_grpc_grpc//:requirements.bazel.txt",
-)
-
-load("@io_bazel_rules_python//python:pip.bzl", "pip_repositories")
-
-pip_repositories()
-
-load("@grpc_python_dependencies//:requirements.bzl", "pip_install")
-
-pip_install()
 
 ################################################################################
 # Ory Keto
@@ -276,3 +262,27 @@ http_archive(
 load("@rules_rust//rust:repositories.bzl", "rust_repositories")
 
 rust_repositories()
+
+################################################################################
+# Anchore Rules
+
+http_archive(
+    name = "com_github_hxtk_rules_anchore",
+    sha256 = "1323fe4fc9624794b280fc04167500160bda023282c470d9eb03bdae15273149",
+    strip_prefix = "rules_anchore-2.1.2",
+    urls = ["https://github.com/hxtk/rules_anchore/archive/refs/tags/v2.1.2.zip"],
+)
+
+load("@com_github_hxtk_rules_anchore//:deps.bzl", "anchore_deps")
+
+anchore_deps()
+
+load("@com_github_hxtk_rules_anchore//:extra_deps.bzl", "anchore_extra_deps")
+
+# By default, this method configures a Go toolchain. If you have already
+# configured a Go toolchain in your WORKSPACE, pass `configure_go=False`.
+anchore_extra_deps(configure_go=False)
+
+load("//:deps.bzl", "grype_db")
+
+grype_db()

@@ -1,7 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@io_bazel_rules_docker//container:container.bzl", "container_layer", "container_image", "container_push")
-load("//tools:anchore.bzl", "grype_test", "syft_sbom")
+load("@com_github_hxtk_rules_anchore//anchore:anchore.bzl", "grype_test")
 
 go_library(
     name = "lib",
@@ -25,24 +25,15 @@ pkg_tar(
 )
 
 container_image(
-    name = "tool_server_image",
+    name = "server_image",
     base = "@distroless_static//image",
     tars = [":tool_server_pkg"],
 )
 
-syft_sbom(
-    name = "sbom",
-    image = ":tool_server_image.tar",
-)
-
 grype_test(
     name = "cve_scan",
-    sbom = ":sbom",
-    tags = [
-        "manual",
-        "external",
-        "large",
-    ],
+    image = ":server_image.tar",
+    database = "@cve_database//file",
 )
 
 pkg_tar(
