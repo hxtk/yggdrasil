@@ -35,27 +35,3 @@ grype_test(
     image = ":server_image.tar",
     database = "@cve_database//file",
 )
-
-pkg_tar(
-    name = "main_config",
-    srcs = ["prod.yaml"],
-    extension = "tar.gz",
-    mode = "0644",
-    package_dir = "/etc/tool-server",
-)
-
-pkg_tar(
-    name = "prod_config",
-    srcs = ["prod.yaml"],
-    extension = "tar.gz",
-    mode = "0644",
-    package_dir = "/etc/tool-server",
-)
-
-pkg_tar(
-    name = "dev_config",
-    srcs = ["dev.yaml"],
-    extension = "tar.gz",
-    mode = "0644",
-    package_dir = "/etc/tool-server",
-)

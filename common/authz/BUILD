@@ -16,16 +16,3 @@ go_library(
         "//visibility:public",
     ],
 )
-
-cc_library(
-    name = "cc_interceptor",
-    srcs = glob(["*.cc"]),
-    hdrs = glob(["*.h"]),
-    deps = [
-        "@com_github_grpc_grpc//:grpc++",
-	"@ory_keto_v1alpha1//:acl_cc_grpc",
-	"@com_authzed_api//:permission_service_cc_grpc",
-	"@com_github_google_glog//:glog",
-    ],
-    visibility = ["//visibility:public"],
-)
