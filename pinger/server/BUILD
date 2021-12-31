@@ -1,6 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@io_bazel_rules_docker//container:container.bzl", "container_layer", "container_image", "container_push")
+load("@com_github_hxtk_rules_anchore//anchore:anchore.bzl", "grype_test")
 
 go_library(
     name = "lib",
@@ -23,3 +24,14 @@ pkg_tar(
     package_dir = "/usr/bin",
 )
 
+container_image(
+    name = "server_image",
+    base = "@distroless_static//image",
+    tars = [":pinger_pkg"],
+)
+
+grype_test(
+    name = "cve_scan",
+    image = ":server_image.tar",
+    database = "@cve_database//file",
+)

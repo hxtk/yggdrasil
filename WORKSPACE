@@ -183,6 +183,8 @@ http_archive(
 ################################################################################
 # Authzed SpiceDB client APIs
 
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+
 new_git_repository(
     name = "com_authzed_api",
     build_file = "//third_party:com_authzed_api.bazel",
