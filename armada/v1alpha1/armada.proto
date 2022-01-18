@@ -1,0 +1,490 @@
+syntax = "proto3";
+
+package yggdrasil.armada.v1alpha1;
+
+option go_package="github.com/hxtk/yggdrasil/armada/v1alpha1;armada";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+import "google/api/client.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/type/money.proto";
+
+import "common/authz/v1alpha1/annotations.proto";
+
+message User {
+	option (google.api.resource) = {
+		type: "armada.psanders.me/User"
+		pattern: "users/{user}"
+	};
+
+	string name = 1;
+
+	string display_name = 2;
+
+	string currency_code = 3;
+}
+
+// Vehicle represents a literal vehicle, including some administrative
+// information as well as the information necessary to track various
+// types of service interval.
+message Vehicle {
+	option (google.api.resource) = {
+		type: "armada.psanders.me/Vehicle"
+		pattern: "users/{user}/vehicles/{vehicle}"
+	};
+
+	// Name is the canonical Resource name of the vehicle.
+	// It will match google.api.resource.pattern above.
+	string name = 1;
+
+	// DisplayName is the human-readable name of a vehicle.
+	string display_name = 2;
+
+	// Description is an arbitrary text field for user notes.
+	string description = 3;
+
+	// Serial number is the manufacturer's or organization's
+	// serial number for the vehicle, such as a VIN.
+	string serial_number = 4;
+
+	// Odometer is the current odometer reading of the vehicle.
+	uint32 odometer = 5;
+
+	// Usage is the amount of time the unit has spent actively
+	// being used, intended for devices such as lawnmowers where
+	// maintenance intervals are typically specified in terms of
+	// usage hours rather than mileage.
+	google.protobuf.Duration usage = 6;
+
+	// CreateTime is the time at which this vehicle was created.
+	google.protobuf.Timestamp create_time = 7;
+}
+
+message ListVehiclesRequest {
+	// Parent is the resource URN of the user whose vehicles are
+	// being requested.
+	//
+	// Clients may us a user ID of "-" (i.e., "users/-") to
+	// indicate a wildcard character.
+	string parent = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			child_type: "armada.psanders.me/Vehicle"
+		}
+	];
+
+	// PageSize is the maximum number of Vehciles that will be
+	// returned in the response. If more vehicles match the
+	// query, a page token shall be returned to continue the
+	// request at the next matching item.
+	int32 page_size = 2;
+
+	// PageToken is an opaque token retrieved from the
+	// NextPageToken field of a previous ListVehiclesResponse,
+	// passed in order to continue where that request left off.
+	string page_token = 3;
+}
+
+message ListVehiclesResponse {
+	// Vehicles is the list of vehicles matching the query.
+	repeated Vehicle vehicles = 1;
+
+	// NextPageToken is the token that a user may pass to
+	// the PageToken field of a subsequent ListVehiclesRequest
+	// in order to retrieve the next page of vehicles.
+	// If the number of results at the requested page token
+	// is less than the PageSize of the request, this field
+	// will be empty.
+	string next_page_token = 2;
+}
+
+message CreateVehicleRequest {
+	// Parent is the resource name of the user to whom the created
+	// vehicle will belong.
+	string parent = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			child_type: "armada.psanders.me/Vehicle"
+		}
+	];
+
+	// Vehicle is the initial state of the created vehicle. The
+	// contents of the Name field will be overwritten with a value
+	// determined by the server.
+	Vehicle vehicle = 2;
+}
+
+message GetVehicleRequest {
+	// Name is the resource URN of the vehicle being requested.
+	string name = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			type: "armada.psanders.me/Vehicle"
+		}
+	];
+}
+
+message UpdateVehicleRequest {
+	// Vehicle is the new state of the vehicle. The Name
+	// field is required, but all other fields are optional.
+	// See UpdateMask for semantics.
+	Vehicle vehicle = 1 [(google.api.field_behavior) = REQUIRED];
+
+	// A non-empty update mask indicates which fields are to be
+	// updated in this transaction. If the update mask is empty,
+	// Vehicle is considered to be a complete replacement of the
+	// existing state.
+	// Note: a vehicle cannot be renamed by specifying its name
+	// in the UpdateMask.
+	google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteVehicleRequest {
+	// Name is the resource URN of the vehicle being deleted.
+	string name = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			type: "armada.psanders.me/Vehicle"
+		}
+	];
+}
+
+// Job is a unit of work that was performed on a vehicle. This
+// type logs an event that has already taken place. The purpose
+// of a Job is to satisfy Tasks on the maintenance schedule for
+// its parent Vehicle.
+message Job {
+	option (google.api.resource) = {
+		type: "armada.psanders.me/Job"
+		pattern: "users/{user}/vehicles/{vehicle}/jobs/{job}"
+	};
+
+	// Name is the canonical URN of a job.
+	string name = 1;
+
+	// Description is a free text field for the technician's and
+	// inspector's notes on the job to describe the work performed.
+	string description = 2;
+
+	// DatePerformed is a timestamp recording when the job was
+	// completed.
+	google.protobuf.Timestamp date_performed = 3;
+
+	// TechnicianName is an unstructured string to record the identity
+	// of the person or organization that performed or oversaw the work
+	// that was part of a job.
+	string technician_name = 4;
+
+	// DateInspected is a timestamp indicating when the job's inspection
+	// was completed.
+	google.protobuf.Timestamp date_inspected = 5;
+
+	// InspectorName is an unstructured string to record the identity
+	// of the person or organization that inspected the work.
+	string inspector_name = 6;
+
+	// Cost is the monetary cost of parts and labor for the job.
+	google.type.Money cost = 7;
+
+	// TimeTaken is the amount of time that was spent on the job.
+	google.protobuf.Duration time_taken = 8;
+
+	// TasksPerformed is the list of URNs naming tasks that were completed
+	// as part of this job.
+	repeated string tasks_performed = 9 [
+		(google.api.resource_reference) = {
+			type: "armada.psanders.me/Task"
+		}
+	];
+}
+
+message ListJobsRequest {
+	string parent = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			child_type: "armada.psanders.me/Job"
+		}
+	];
+
+	int32 page_size = 2;
+
+	string page_token = 3;
+}
+
+message ListJobsResponse {
+	repeated Job jobs = 1;
+	string next_page_token = 2;
+}
+
+message CreateJobRequest {
+	string parent = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			child_type: "armada.psanders.me/Job"
+		}
+	];
+
+	Job job = 2;
+}
+
+message GetJobRequest {
+	string name = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			type: "armada.psanders.me/Job"
+		}
+	];
+}
+
+message UpdateJobRequest {
+	Job job = 1 [(google.api.field_behavior) = REQUIRED];
+	google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteJobRequest {
+	string name = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			type: "armada.psanders.me/Job"
+		}
+	];
+}
+
+message Task {
+	option (google.api.resource) = {
+		type: "armada.psanders.me/Task"
+		pattern: "users/{user}/vehicles/{vehicle}/tasks/{task}"
+	};
+
+	string name = 1;
+
+	string display_name = 2;
+
+	string description = 3;
+
+	google.protobuf.Duration calendar_interval = 4;
+	google.protobuf.Duration usage_interval = 5;
+	uint32 odometer_interval = 6;
+
+	google.type.Money nominal_cost = 7;
+}
+
+message ListTasksRequest {
+	string parent = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			child_type: "armada.psanders.me/Task"
+		}
+	];
+
+	int32 page_size = 2;
+
+	string page_token = 3;
+}
+
+message ListTasksResponse {
+	repeated Task tasks = 1;
+	string next_page_token = 2;
+}
+
+message CreateTaskRequest {
+	string parent = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			child_type: "armada.psanders.me/Task"
+		}
+	];
+
+	Task task = 2;
+}
+
+message GetTaskRequest {
+	string name = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			type: "armada.psanders.me/Task"
+		}
+	];
+}
+
+message UpdateTaskRequest {
+	Task task = 1 [(google.api.field_behavior) = REQUIRED];
+	google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteTaskRequest {
+	string name = 1 [
+		(google.api.field_behavior) = REQUIRED,
+		(google.api.resource_reference) = {
+			type: "armada.psanders.me/Task"
+		}
+	];
+}
+
+// Fleet is a service for managing the 
+service Fleet {
+	option (google.api.default_host) = "fleet.armada.psanders.me";
+	option (yggdrasil.api.authz.v1alpha1.default_permissions) = {
+		resource_type: "armada/vehicles"
+	};
+
+	rpc ListVehicles(ListVehiclesRequest) returns (ListVehiclesResponse) {
+		option (google.api.http) = {
+			get: "/v1/{parent=users/*}/vehicles"
+		};
+		option (google.api.method_signature) = "parent";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "list"
+		};
+	}
+	rpc CreateVehicle(CreateVehicleRequest) returns (Vehicle) {
+		option (google.api.http) = {
+			post: "/v1/{parent=users/*}/vehicles"
+			body: "vehicle"
+		};
+		option (google.api.method_signature) = "parent,vehicle";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "create"
+		};
+	}
+	rpc GetVehicle(GetVehicleRequest) returns (Vehicle) {
+		option (google.api.http) =  {
+			get: "/v1/{name=users/*/vehicles/*}"
+		};
+		option (google.api.method_signature) = "name";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "view"
+		};
+	}
+	rpc UpdateVehicle(UpdateVehicleRequest) returns (Vehicle) {
+		option (google.api.http) =  {
+			patch: "/v1/{vehicle.name=users/*/vehicles/*}"
+			body: "vehicle"
+		};
+		option (google.api.method_signature) = "vehicle,update_mask";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "edit"
+		};
+	}
+	rpc DeleteVehicle(DeleteVehicleRequest) returns (google.protobuf.Empty) {
+		option (google.api.http) =  {
+			get: "/v1/{name=users/*/vehicles/*}"
+		};
+		option (google.api.method_signature) = "name";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "delete"
+		};
+	}
+}
+
+service Schedule {
+	option (google.api.default_host) = "schedule.armada.psanders.me";
+	option (yggdrasil.api.authz.v1alpha1.default_permissions) = {
+		resource_type: "armada/tasks"
+	};
+	rpc ListTasks(ListTasksRequest) returns (ListTasksResponse) {
+		option (google.api.http) = {
+			get: "/v1/{parent=users/*/vehicles/*}/tasks"
+		};
+		option (google.api.method_signature) = "parent";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "list"
+		};
+	}
+	rpc CreateTask(CreateTaskRequest) returns (Task) {
+		option (google.api.http) = {
+			post: "/v1/{parent=users/*/vehicles/*}/tasks"
+			body: "task"
+		};
+		option (google.api.method_signature) = "parent,task";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "create"
+		};
+	}
+	rpc GetTask(GetTaskRequest) returns (Task) {
+		option (google.api.http) = {
+			get: "/v1/{name=users/*/vehicles/*/tasks/*}"
+		};
+		option (google.api.method_signature) = "name";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "view"
+		};
+	}
+	rpc UpdateTask(UpdateTaskRequest) returns (Task) {
+		option (google.api.http) = {
+			patch: "/v1/{task.name=users/*/vehicles/*/tasks/*}"
+			body: "task"
+		};
+		option (google.api.method_signature) = "task,update_mask";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "edit"
+		};
+	}
+	rpc DeleteTask(DeleteTaskRequest) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			delete: "/v1/{name=users/*/vehicles/*/tasks/*}"
+		};
+		option (google.api.method_signature) = "name";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "delete"
+		};
+	}
+}
+
+service Log {
+	option (google.api.default_host) = "log.armada.psanders.me";
+	option (yggdrasil.api.authz.v1alpha1.default_permissions) = {
+		resource_type: "armada/jobs"
+	};
+	rpc ListJobs(ListJobsRequest) returns (ListJobsResponse) {
+		option (google.api.http) = {
+			get: "/v1/{parent=users/*/vehicles/*}/jobs"
+		};
+		option (google.api.method_signature) = "parent";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "list"
+		};
+	}
+	rpc CreateJob(CreateJobRequest) returns (Job) {
+		option (google.api.http) = {
+			post: "/v1/{parent=users/*/vehicles/*}/jobs"
+		};
+		option (google.api.method_signature) = "parent,job";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "create"
+		};
+	}
+	rpc GetJob(GetJobRequest) returns (Job) {
+		option (google.api.http) = {
+			get: "/v1/{name=users/*/vehicles/*/jobs/*}"
+		};
+		option (google.api.method_signature) = "name";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "view"
+		};
+	}
+	rpc UpdateJob(UpdateJobRequest) returns (Job) {
+		option (google.api.http) = {
+			patch: "/v1/{job.name=users/*/vehicles/*/job/*}"
+		};
+		option (google.api.method_signature) = "job,update_mask";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "edit"
+		};
+	}
+	rpc DeleteJob(DeleteJobRequest) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			delete: "/v1/{name=users/*/vehicles/*/job/*}"
+		};
+		option (google.api.method_signature) = "name";
+		option (yggdrasil.api.authz.v1alpha1.permissions) = {
+			permission: "delete"
+		};
+	}
+}

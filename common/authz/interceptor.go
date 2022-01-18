@@ -2,13 +2,16 @@ package authz
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
-	pb "github.com/authzed/authzed-go/proto/authzed/api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 
+	pb "github.com/authzed/authzed-go/proto/authzed/api/v1"
 	"github.com/hxtk/yggdrasil/common/authn"
 	"github.com/hxtk/yggdrasil/common/authz/v1alpha1"
 )
@@ -100,7 +103,12 @@ func (ra *ResourceAuthorizer) UnaryServerInterceptor() grpc.UnaryServerIntercept
 			return nil, status.Error(codes.Internal, "Could not determine required permissions.")
 		}
 
-		name, err := getResourceName(req)
+		msg, ok := req.(proto.Message)
+		if !ok {
+			return nil, status.Errorf(codes.Internal, "Message was of type %T; expected proto.Message", msg)
+		}
+
+		name, err := getResourceName(msg.ProtoReflect())
 		if err != nil {
 			return nil, err
 		}
@@ -134,15 +142,34 @@ type parenter interface {
 	GetParent() string
 }
 
-func getResourceName(req interface{}) (string, error) {
-	switch v := req.(type) {
-	case namer:
-		return v.GetName(), nil
-	case parenter:
-		return v.GetParent(), nil
-	default:
-		return "__root__", nil
-	}
+var errNameNotFound = errors.New("resource name not found")
+
+func getResourceName(msg protoreflect.Message) (name string, err error) {
+	msg.Range(func(field protoreflect.FieldDescriptor, value protoreflect.Value) bool {
+		// Check if this field is the name field
+		if field.Kind() == protoreflect.StringKind && field.Number() == 1 {
+			if field.TextName() != "name" && field.TextName() != "parent" {
+				return true
+			}
+
+			name = value.String()
+			return false
+		}
+
+		if field.Kind() != protoreflect.MessageKind {
+			return true
+		}
+
+		// Check if this field contains the name field, recursively
+		name, err = getResourceName(value.Message())
+		if err != errNameNotFound {
+			return false
+		}
+
+		return true
+	})
+
+	return
 }
 
 // ZedTokenFromContext returns a ZedToken embedded in the context.

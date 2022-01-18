@@ -28,12 +28,18 @@ type Unstringer interface {
 // which are valid within a URL.
 type URN struct {
 	// Parts represents the `/`-delimited components of the URN, with `/`s omitted.
-	Parts []string
+	Parts  []string
+	Values map[string]string
 }
 
 // Parse parses a URN into its components from a string.
-func Parse(urn string) URN {
-	return URN{Parts: strings.Split(urn, "/")}
+func Parse(urn string) *URN {
+	return &URN{Parts: strings.Split(urn, "/")}
+}
+
+func (u *URN) Get(key string) (string, bool) {
+	val, ok := u.Values[key]
+	return val, ok
 }
 
 // Scan parses the Parts of a URN into the destinations provided.
@@ -55,7 +61,7 @@ func Parse(urn string) URN {
 // assumed that any or all of the receivers may have been modified
 // from their original values, but those values should not be considered
 // valid.
-func (u URN) Scan(dest ...interface{}) error {
+func (u *URN) Scan(dest ...interface{}) error {
 	if len(dest) > len(u.Parts) {
 		return errors.New("urn: fewer parts than receivers")
 	}

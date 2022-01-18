@@ -1242,6 +1242,12 @@ def go_dependencies():
         sum = "h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=",
         version = "v1.3.0",
     )
+    go_repository(
+        name = "com_github_googleapis_gapic_generator_go",
+        importpath = "github.com/googleapis/gapic-generator-go",
+        sum = "h1:ubfO1WSFuS2dKORItIu2G/woC9Aucu8wPLJ5PrTJw/A=",
+        version = "v0.24.0",
+    )
 
     go_repository(
         name = "com_github_googleapis_gax_go_v2",
@@ -1261,6 +1267,12 @@ def go_dependencies():
         importpath = "github.com/gopherjs/gopherjs",
         sum = "h1:EGx4pi6eqNxGaHF6qqu48+N2wcFQ5qg5FXgOdqsJ5d8=",
         version = "v0.0.0-20181017120253-0766667cb4d1",
+    )
+    go_repository(
+        name = "com_github_gordonklaus_ineffassign",
+        importpath = "github.com/gordonklaus/ineffassign",
+        sum = "h1:vc7Dmrk4JwS0ZPS6WZvWlwDflgDTA26jItmbSj83nug=",
+        version = "v0.0.0-20200309095847-7953dde2c7bf",
     )
 
     go_repository(
@@ -1550,6 +1562,12 @@ def go_dependencies():
         importpath = "github.com/jackc/puddle",
         sum = "h1:JnPg/5Q9xVJGfjsO5CPUOjnJps1JaRUm8I9FXVCFK94=",
         version = "v1.1.3",
+    )
+    go_repository(
+        name = "com_github_jhump_protoreflect",
+        importpath = "github.com/jhump/protoreflect",
+        sum = "h1:iH+UZfsbRE6vpyZH7asAjTPWJf7RJbpZ9j/N3lDlKs0=",
+        version = "v1.10.1",
     )
 
     go_repository(
@@ -1998,6 +2016,12 @@ def go_dependencies():
         importpath = "github.com/neo4j/neo4j-go-driver",
         sum = "h1:fhFP5RliM2HW/8XdcO5QngSfFli9GcRIpMXvypTQt6E=",
         version = "v1.8.1-0.20200803113522-b626aa943eba",
+    )
+    go_repository(
+        name = "com_github_nishanths_predeclared",
+        importpath = "github.com/nishanths/predeclared",
+        sum = "h1:3f0nxAmdj/VoCGN/ijdMy7bj6SBagaqYg1B0hu8clMA=",
+        version = "v0.0.0-20200524104333-86fad755b4d3",
     )
 
     go_repository(
@@ -2593,11 +2617,49 @@ def go_dependencies():
         version = "v0.9.0",
     )
     go_repository(
+        name = "com_gitlab_golang_commonmark_html",
+        importpath = "gitlab.com/golang-commonmark/html",
+        sum = "h1:K+bMSIx9A7mLES1rtG+qKduLIXq40DAzYHtb0XuCukA=",
+        version = "v0.0.0-20191124015941-a22733972181",
+    )
+    go_repository(
+        name = "com_gitlab_golang_commonmark_linkify",
+        importpath = "gitlab.com/golang-commonmark/linkify",
+        sum = "h1:oYrL81N608MLZhma3ruL8qTM4xcpYECGut8KSxRY59g=",
+        version = "v0.0.0-20191026162114-a0c2df6c8f82",
+    )
+    go_repository(
+        name = "com_gitlab_golang_commonmark_markdown",
+        importpath = "gitlab.com/golang-commonmark/markdown",
+        sum = "h1:O85GKETcmnCNAfv4Aym9tepU8OE0NmcZNqPlXcsBKBs=",
+        version = "v0.0.0-20211110145824-bf3e522c626a",
+    )
+    go_repository(
+        name = "com_gitlab_golang_commonmark_mdurl",
+        importpath = "gitlab.com/golang-commonmark/mdurl",
+        sum = "h1:qqjvoVXdWIcZCLPMlzgA7P9FZWdPGPvP/l3ef8GzV6o=",
+        version = "v0.0.0-20191124015652-932350d1cb84",
+    )
+    go_repository(
+        name = "com_gitlab_golang_commonmark_puny",
+        importpath = "gitlab.com/golang-commonmark/puny",
+        sum = "h1:Wku8eEdeJqIOFHtrfkYUByc4bCaTeA6fL0UJgfEiFMI=",
+        version = "v0.0.0-20191124015043-9f83538fa04f",
+    )
+
+    go_repository(
         name = "com_gitlab_nyarla_go_crypt",
         importpath = "gitlab.com/nyarla/go-crypt",
         sum = "h1:7gd+rd8P3bqcn/96gOZa3F5dpJr/vEiDQYlNb/y2uNs=",
         version = "v0.0.0-20160106005555-d9a5dc2b789b",
     )
+    go_repository(
+        name = "com_gitlab_opennota_wd",
+        importpath = "gitlab.com/opennota/wd",
+        sum = "h1:uPZaMiz6Sz0PZs3IZJWpU5qHKGNy///1pacZC9txiUI=",
+        version = "v0.0.0-20180912061657-c5d65f63c638",
+    )
+
     go_repository(
         name = "com_google_cloud_go",
         importpath = "cloud.google.com/go",
@@ -2947,8 +3009,8 @@ def go_dependencies():
     go_repository(
         name = "org_golang_google_genproto",
         importpath = "google.golang.org/genproto",
-        sum = "h1:I0YcKz0I7OAhddo7ya8kMnvprhcWM045PmkBdMO9zN0=",
-        version = "v0.0.0-20211208223120-3a66f561d7aa",
+        sum = "h1:ZrsicilzPCS/Xr8qtBZZLpy4P9TYXAfl49ctG1/5tgw=",
+        version = "v0.0.0-20211223182754-3ac035c7e7cb",
     )
     go_repository(
         name = "org_golang_google_grpc_cmd_protoc_gen_go_grpc",
@@ -3262,4 +3324,5 @@ def grype_db():
             "https://toolbox-data.anchore.io/grype/databases/vulnerability-db_v3_2021-12-29T08:14:04Z.tar.gz",
         ],
     )
+
 # END com_github_hxtk_rules_anchore managed block

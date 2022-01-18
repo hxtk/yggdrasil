@@ -50,7 +50,6 @@ switched_rules_by_language(
     grpc = True,
 )
 
-
 ################################################################################
 # Golang Rules
 
@@ -143,6 +142,19 @@ container_pull(
     tag = "nonroot",
 )
 
+#################################################################
+# GAPIC-Go
+
+http_archive(
+    name = "com_googleapis_gapic_generator_go",
+    sha256 = "702ca62d4fb7b925c218cbe86fe82c222e379f1f9a80a9bfda938d668ad61639",
+    strip_prefix = "gapic-generator-go-0.24.0",
+    urls = ["https://github.com/googleapis/gapic-generator-go/archive/refs/tags/v0.24.0.zip"],
+)
+
+load("@com_googleapis_gapic_generator_go//:repositories.bzl", "com_googleapis_gapic_generator_go_repositories")
+
+com_googleapis_gapic_generator_go_repositories()
 ################################################################################
 # gRPC C++ Rules
 
@@ -198,9 +210,9 @@ new_git_repository(
 
 http_archive(
     name = "com_github_hxtk_rules_anchore",
-    sha256 = "1323fe4fc9624794b280fc04167500160bda023282c470d9eb03bdae15273149",
-    strip_prefix = "rules_anchore-2.1.2",
-    urls = ["https://github.com/hxtk/rules_anchore/archive/refs/tags/v2.1.2.zip"],
+    sha256 = "0ebe243333ff8108e9aa4a58450c561ceeb22b0a233d6e8bc9310fa8a3efc51b",
+    strip_prefix = "rules_anchore-2.2.0",
+    urls = ["https://github.com/hxtk/rules_anchore/archive/refs/tags/v2.2.0.zip"],
 )
 
 load("@com_github_hxtk_rules_anchore//:deps.bzl", "anchore_deps")
@@ -211,7 +223,7 @@ load("@com_github_hxtk_rules_anchore//:extra_deps.bzl", "anchore_extra_deps")
 
 # By default, this method configures a Go toolchain. If you have already
 # configured a Go toolchain in your WORKSPACE, pass `configure_go=False`.
-anchore_extra_deps(configure_go=False)
+anchore_extra_deps(configure_go = False)
 
 load("//:deps.bzl", "grype_db")
 
