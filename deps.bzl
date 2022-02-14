@@ -3319,9 +3319,9 @@ def go_dependencies():
 def grype_db():
     http_file(
         name = "cve_database",
-        sha256 = "63f2b5579d491ac43ced6d88cb91c8dc5724c552f4d8405e9cf8941fa4a109fd",
+        sha256 = "f8d9b30cbb7022a4d8361399d04be18eb999529632d33ffe1525168860a1e75f",
         urls = [
-            "https://toolbox-data.anchore.io/grype/databases/vulnerability-db_v3_2022-02-07T08:14:48Z.tar.gz",
+            "https://toolbox-data.anchore.io/grype/databases/vulnerability-db_v3_2022-02-14T08:19:30Z.tar.gz",
         ],
     )
 # END com_github_hxtk_rules_anchore managed block
