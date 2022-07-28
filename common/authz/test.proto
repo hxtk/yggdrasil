@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package yggdrasil.authz.test;
+
+option go_package="github.com/hxtk/yggdrasil/common/authz";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+message Book {
+	string name = 1;
+}
+
+message ListBooksRequest {
+	string parent = 1;
+	string page_token = 2;
+	int32 page_size = 3;
+}
+
+message ListBooksResponse {
+	repeated Book books = 1;
+
+	string next_page_token = 2;
+}
+
+message CreateBookRequest {
+	Book book = 1;
+}
+
+message GetBookRequest {
+	string name = 1;
+}
+
+message UpdateBookRequest {
+	Book book = 1;
+	google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteBookRequest {
+	string name = 1;
+}
