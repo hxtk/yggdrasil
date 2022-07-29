@@ -1,0 +1,54 @@
+{
+  "bools": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "buildtag": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "nilfunc": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "shadow": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code",
+      ".*/cgo/github.com/ThalesIgnite/crypto11/.*": "cgo third-party code"
+    }
+  },
+  "unsafeptr": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "copylocks": {
+    "exclude_files": {
+      "external/org_golang_google_protobuf/.*": "third-party code"
+    }
+  },
+  "composites": {
+    "exclude_files": {
+      "external/org_golang_google_protobuf/.*": "third-party code"
+    }
+  },
+  "nilness": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code",
+      ".*/github.com/miekg/pkcs11/.*": "cgo third party code"
+    }
+  },
+  "unreachable": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "printf": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  }
+}
