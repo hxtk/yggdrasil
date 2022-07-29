@@ -45,6 +45,14 @@
       "external/.*": "enforce requirements only on first-party code"
     }
   },
+  "path_traversal": {
+    "exclude_files": {
+      "external/com_github_prometheus_procfs/proc[^/]*.go": "Prometheus traverses /proc filesystem.",
+      "external/com_github_kevinburke_ssh_config/config.go": "TODO: Audit usage",
+      "external/com_github_securego_gosec/issue.go": "Part of code scanning pipeline, not deployed.",
+      "external/com_github_nbutton23_zxcvbn_go/data/bindata.go": "Part of code scanning pipeline, not deployed."
+    }
+  },
   "printf": {
     "exclude_files": {
       "external/.*": "enforce requirements only on first-party code"
@@ -55,6 +63,20 @@
       ".*/cgo/github.com/ThalesIgnite/crypto11/.*": "cgo third-party code",
       ".*\\.pb\\.gw\\.go": "generated code",
       "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "stdmethods": {
+    "exclude_files": {
+      "external/com_github_zclconf_go_cty/cty/gob.go": "enforce requirements only on first-party code"
+    }
+  },
+  "stringintconv": {
+    "exclude_files": {
+      "external/com_github_sergi_go_diff/diffmatchpatch/patch.go": "false positive"
+    }
+  },
+  "sql_injection": {
+    "exclude_files": {
     }
   },
   "unreachable": {

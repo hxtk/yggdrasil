@@ -9,7 +9,7 @@ import (
 
 	authzed "github.com/authzed/authzed-go/proto/authzed/api/v1"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,11 +20,11 @@ import (
 )
 
 const listVehiclesQuery = `
-	SELECT * FROM vehicles WHERE id IN (?) LIMIT ? OFFSET ?;
+	SELECT * FROM vehicles WHERE id = ANY(?) LIMIT ? OFFSET ?;
 `
 
 const listVehiclesOwnerQuery = `
-	SELECT * FROM vehicles WHERE owner = ? AND id IN (?) LIMIT ? OFFSET ?;
+	SELECT * FROM vehicles WHERE owner = ? AND id = ANY(?) LIMIT ? OFFSET ?;
 `
 
 // ListVehicles implements Fleet for Server.
@@ -82,12 +82,7 @@ func (s *Server) ListVehicles(ctx context.Context, r *pb.ListVehiclesRequest) (*
 	}
 
 	if user, _ := parent.Get("user"); user == "-" {
-		q, args, err := sqlx.In(listVehiclesQuery, vids, r.GetPageSize(), offset)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Internal server error.")
-		}
-
-		rows, err = s.db.QueryContext(ctx, q, args...)
+		rows, err = s.db.QueryContext(ctx, listVehiclesQuery, vids, r.GetPageSize(), offset)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Internal server error.")
 		}
@@ -97,12 +92,7 @@ func (s *Server) ListVehicles(ctx context.Context, r *pb.ListVehiclesRequest) (*
 			status.Errorf(codes.InvalidArgument, "No such user.")
 		}
 
-		q, args, err := sqlx.In(listVehiclesQuery, owner, vids, r.GetPageSize(), offset)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Internal server error.")
-		}
-
-		rows, err = s.db.QueryContext(ctx, q, args...)
+		rows, err = s.db.QueryContext(ctx, listVehiclesOwnerQuery, owner, pq.Array(vids), r.GetPageSize(), offset)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Internal server error.")
 		}

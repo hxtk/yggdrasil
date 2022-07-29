@@ -1,12 +1,12 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@com_github_hxtk_rules_anchore//anchore:defs.bzl", "grype_updater")
 load("@io_bazel_rules_go//go:def.bzl", "nogo", "TOOLS_NOGO")
+load("//analyzers/gokart:gokart.bzl", _GOKART_ANALYZERS = "ANALYZERS")
 
 nogo(
     name = "my_nogo",
-    #vet = True,
     config = "nogo_config.json",
-    deps = TOOLS_NOGO + [
+    deps = TOOLS_NOGO + _GOKART_ANALYZERS + [
         "//analyzers/gosec:go_default_library",
     ],
     visibility = ["//visibility:public"],
