@@ -117,9 +117,8 @@ func TestGetCommand(t *testing.T) {
 
 		s := &Server{db}
 		cmd, err := s.GetCommand(context.Background(), &pb.GetCommandRequest{Name: "commands/1"})
-
-		if err == nil {
-			t.Errorf("Expected success; got error: %v", err)
+		if status.Convert(err).Code() != codes.NotFound {
+			t.Errorf("Expected grpc status %v; got %v", codes.NotFound, status.Convert(err).Code())
 		}
 
 		if cmd != nil {
@@ -130,9 +129,6 @@ func TestGetCommand(t *testing.T) {
 			t.Errorf("Failed expectation: %v", err)
 		}
 
-		if status.Convert(err).Code() != codes.NotFound {
-			t.Errorf("Expected grpc status %v; got %v", codes.NotFound, status.Convert(err).Code())
-		}
 	})
 
 	t.Run("database error fetching command", func(t *testing.T) {
@@ -147,9 +143,8 @@ func TestGetCommand(t *testing.T) {
 
 		s := &Server{db}
 		cmd, err := s.GetCommand(context.Background(), &pb.GetCommandRequest{Name: "commands/1"})
-
-		if err == nil {
-			t.Errorf("Expected success; got error: %v", err)
+		if status.Convert(err).Code() != codes.Unavailable {
+			t.Errorf("Expected grpc status %v; got %v", codes.Unavailable, status.Convert(err).Code())
 		}
 
 		if cmd != nil {
@@ -160,8 +155,5 @@ func TestGetCommand(t *testing.T) {
 			t.Errorf("Failed expectation: %v", err)
 		}
 
-		if status.Convert(err).Code() != codes.Unavailable {
-			t.Errorf("Expected grpc status %v; got %v", codes.Unavailable, status.Convert(err).Code())
-		}
 	})
 }

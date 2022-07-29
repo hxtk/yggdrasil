@@ -131,9 +131,8 @@ func TestDeleteCommand(t *testing.T) {
 		cmd, err := s.DeleteCommand(context.Background(), &pb.DeleteCommandRequest{
 			Name: "commands/1",
 		})
-
-		if err == nil {
-			t.Errorf("Expected success; got error: %v", err)
+		if status.Convert(err).Code() != codes.FailedPrecondition {
+			t.Errorf("Expected grpc status %v; got %v", codes.FailedPrecondition, status.Convert(err).Code())
 		}
 
 		if cmd != nil {
@@ -144,8 +143,5 @@ func TestDeleteCommand(t *testing.T) {
 			t.Errorf("Failed expectation: %v", err)
 		}
 
-		if status.Convert(err).Code() != codes.FailedPrecondition {
-			t.Errorf("Expected grpc status %v; got %v", codes.FailedPrecondition, status.Convert(err).Code())
-		}
 	})
 }

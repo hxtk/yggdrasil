@@ -187,9 +187,8 @@ func TestCreateCommand(t *testing.T) {
 				Status:      pb.Status_READY,
 			},
 		})
-
-		if err == nil {
-			t.Errorf("Expected success; got error: %v", err)
+		if status.Convert(err).Code() != codes.Unavailable {
+			t.Errorf("Expected grpc status %v; got %v", codes.Unavailable, status.Convert(err).Code())
 		}
 
 		if cmd != nil {
@@ -200,8 +199,5 @@ func TestCreateCommand(t *testing.T) {
 			t.Errorf("Failed expectation: %v", err)
 		}
 
-		if status.Convert(err).Code() != codes.Unavailable {
-			t.Errorf("Expected grpc status %v; got %v", codes.Unavailable, status.Convert(err).Code())
-		}
 	})
 }
