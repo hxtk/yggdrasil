@@ -1,7 +1,6 @@
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
-load("@com_googleapis_gapic_generator_go//rules_go_gapic:go_gapic.bzl", "go_gapic_library")
 
 proto_library(
     name = "armada_proto",
@@ -41,17 +40,6 @@ go_proto_library(
         "//common/authz:go_default_library",
         "//common/urn:go_default_library",
     ],
-)
-
-go_gapic_library(
-    name = "armada_go_gapic",
-    srcs = [
-        ":armada_proto",
-    ],
-    deps = [
-        ":armada_go_proto",
-    ],
-    importpath = "github.com/hxtk/yggdrasil/armada/v1alpha1/client;armada",
 )
 
 go_library(

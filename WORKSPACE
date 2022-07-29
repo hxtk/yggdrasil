@@ -69,9 +69,9 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "com_google_protobuf",
-    sha256 = "528927e398f4e290001886894dac17c5c6a2e5548f3fb68004cfb01af901b53a",
-    strip_prefix = "protobuf-3.17.3",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.17.3.zip"],
+    sha256 = "3d7764816081cb57752869d99b8d1c6523c054ceb19581737210a838d77403e0",
+    strip_prefix = "protobuf-21.4",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v21.4.zip"]
 )
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
@@ -82,9 +82,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
     name = "com_google_googleapis",
-    commit = "355a80d7efb196482e07c8c8ec249b0fdf7d3ff3",
+    commit = "c52559c85e69ea32916f8dd43e9d03bf9f695217",
     remote = "https://github.com/googleapis/googleapis.git",
-    shallow_since = "1616721465 -0700",
+    shallow_since = "1659075574 -0700",
 )
 
 load("@com_google_googleapis//:repository_rules.bzl", "switched_rules_by_language")
@@ -145,36 +145,17 @@ container_pull(
     tag = "nonroot",
 )
 
-#################################################################
-# GAPIC-Go
-
-http_archive(
-    name = "com_googleapis_gapic_generator_go",
-    sha256 = "702ca62d4fb7b925c218cbe86fe82c222e379f1f9a80a9bfda938d668ad61639",
-    strip_prefix = "gapic-generator-go-0.24.0",
-    urls = ["https://github.com/googleapis/gapic-generator-go/archive/refs/tags/v0.24.0.zip"],
-)
-
-load("@com_googleapis_gapic_generator_go//:repositories.bzl", "com_googleapis_gapic_generator_go_repositories")
-
-com_googleapis_gapic_generator_go_repositories()
 ################################################################################
 # gRPC C++ Rules
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
-    name = "io_bazel_rules_python",
-    sha256 = "cd6730ed53a002c56ce4e2f396ba3b3be262fd7cb68339f0377a45e8227fe332",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.5.0/rules_python-0.5.0.tar.gz",
-)
-
-http_archive(
     name = "com_github_grpc_grpc",
-    sha256 = "b2f2620c762427bfeeef96a68c1924319f384e877bc0e084487601e4cc6e434c",
-    strip_prefix = "grpc-1.42.0",
+    sha256 = "9b1f348b15a7637f5191e4e673194549384f2eccf01fcef7cc1515864d71b424",
+    strip_prefix = "grpc-1.48.0",
     urls = [
-        "https://github.com/grpc/grpc/archive/v1.42.0.tar.gz",
+        "https://github.com/grpc/grpc/archive/v1.48.0.tar.gz",
     ],
 )
 
@@ -184,7 +165,7 @@ grpc_deps()
 
 load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
 
-grpc_extra_deps()
+#grpc_extra_deps()
 
 ################################################################################
 # protoc-gen-validate
