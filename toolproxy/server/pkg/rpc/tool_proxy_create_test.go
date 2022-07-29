@@ -196,7 +196,7 @@ func TestCreateCommand(t *testing.T) {
 			t.Errorf("Command should be nil on error.")
 		}
 
-		if err := mock.ExpectationsWereMet(); err != nil {
+		if err = mock.ExpectationsWereMet(); err != nil {
 			t.Errorf("Failed expectation: %v", err)
 		}
 

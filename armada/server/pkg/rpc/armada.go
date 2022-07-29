@@ -52,14 +52,16 @@ func (s *Server) ListVehicles(ctx context.Context, r *pb.ListVehiclesRequest) (*
 
 	var vids []uuid.UUID
 	for {
-		it, err := stream.Recv()
+		var it *authzed.LookupResourcesResponse
+		it, err = stream.Recv()
 		if err == io.EOF {
 			break
 		} else if err != nil {
 			panic("Error looking up resources: " + err.Error())
 		}
 
-		vid, err := uuid.Parse(it.ResourceObjectId)
+		var vid uuid.UUID
+		vid, err = uuid.Parse(it.ResourceObjectId)
 		if err != nil {
 			log.WithError(err).Error("Received malformed armada/vehicle UUID.")
 			continue
@@ -82,13 +84,11 @@ func (s *Server) ListVehicles(ctx context.Context, r *pb.ListVehiclesRequest) (*
 	if user, _ := parent.Get("user"); user == "-" {
 		q, args, err := sqlx.In(listVehiclesQuery, vids, r.GetPageSize(), offset)
 		if err != nil {
-			panic("Error forming query: " + err.Error())
 			return nil, status.Errorf(codes.Internal, "Internal server error.")
 		}
 
 		rows, err = s.db.QueryContext(ctx, q, args...)
 		if err != nil {
-			panic("Error running query: " + err.Error())
 			return nil, status.Errorf(codes.Internal, "Internal server error.")
 		}
 	} else {
@@ -99,13 +99,11 @@ func (s *Server) ListVehicles(ctx context.Context, r *pb.ListVehiclesRequest) (*
 
 		q, args, err := sqlx.In(listVehiclesQuery, owner, vids, r.GetPageSize(), offset)
 		if err != nil {
-			panic("Error forming query: " + err.Error())
 			return nil, status.Errorf(codes.Internal, "Internal server error.")
 		}
 
 		rows, err = s.db.QueryContext(ctx, q, args...)
 		if err != nil {
-			panic("Error running query: " + err.Error())
 			return nil, status.Errorf(codes.Internal, "Internal server error.")
 		}
 	}

@@ -77,8 +77,6 @@ func (u *URN) Scan(dest ...interface{}) error {
 		}
 
 		switch x := v.(type) {
-		case nil:
-			continue
 		case *string:
 			*x = u.Parts[i]
 		case *int:

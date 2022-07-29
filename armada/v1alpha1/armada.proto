@@ -374,7 +374,7 @@ service Fleet {
 	}
 	rpc DeleteVehicle(DeleteVehicleRequest) returns (google.protobuf.Empty) {
 		option (google.api.http) =  {
-			get: "/v1/{name=users/*/vehicles/*}"
+			delete: "/v1/{name=users/*/vehicles/*}"
 		};
 		option (google.api.method_signature) = "name";
 		option (yggdrasil.api.authz.v1alpha1.permissions) = {

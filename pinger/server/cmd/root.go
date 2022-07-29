@@ -59,7 +59,7 @@ to quickly create a Cobra application.`,
 		p.MaxRTT = time.Minute
 
 		for _, v := range args {
-			err := p.AddIP(v)
+			err = p.AddIP(v)
 			if err != nil {
 				log.WithError(err).Fatal("Failed to add IP.")
 			}

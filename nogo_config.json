@@ -17,6 +17,7 @@
   "shadow": {
     "exclude_files": {
       "external/.*": "enforce requirements only on first-party code",
+      ".*\\.pb\\.gw\\.go": "generated code",
       ".*/cgo/github.com/ThalesIgnite/crypto11/.*": "cgo third-party code"
     }
   },
@@ -32,13 +33,19 @@
   },
   "composites": {
     "exclude_files": {
-      "external/org_golang_google_protobuf/.*": "third-party code"
+      "external/.*": "third-party code"
     }
   },
   "nilness": {
     "exclude_files": {
       "external/.*": "enforce requirements only on first-party code",
       ".*/github.com/miekg/pkcs11/.*": "cgo third party code"
+    }
+  },
+  "lostcancel": {
+    "exclude_files": {
+      "external/com_github_grpc_ecosystem_grpc_gateway_v2/runtime/context.go": "context outlives function",
+      "external/com_github_grpc_ecosystem_go_grpc_middleware/retry/retry.go": "context outlives function"
     }
   },
   "unreachable": {

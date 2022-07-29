@@ -17,7 +17,7 @@ go_proto_library(
     name = "command_go_proto",
     compilers = [
         "@io_bazel_rules_go//proto:go_grpc",
-        "@com_github_grpc_ecosystem_grpc_gateway//protoc-gen-grpc-gateway:go_gen_grpc_gateway",
+        "@com_github_grpc_ecosystem_grpc_gateway_v2//protoc-gen-grpc-gateway:go_gen_grpc_gateway",
 	"//common/authz/protoc-gen-go-grpc-permissions:go_proto_permissions",
     ],
     importpath = "github.com/hxtk/yggdrasil/toolproxy/v1",
