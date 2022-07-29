@@ -9,21 +9,9 @@
       "external/.*": "enforce requirements only on first-party code"
     }
   },
-  "nilfunc": {
+  "composites": {
     "exclude_files": {
-      "external/.*": "enforce requirements only on first-party code"
-    }
-  },
-  "shadow": {
-    "exclude_files": {
-      "external/.*": "enforce requirements only on first-party code",
-      ".*\\.pb\\.gw\\.go": "generated code",
-      ".*/cgo/github.com/ThalesIgnite/crypto11/.*": "cgo third-party code"
-    }
-  },
-  "unsafeptr": {
-    "exclude_files": {
-      "external/.*": "enforce requirements only on first-party code"
+      "external/.*": "third-party code"
     }
   },
   "copylocks": {
@@ -31,21 +19,42 @@
       "external/org_golang_google_protobuf/.*": "third-party code"
     }
   },
-  "composites": {
+  "gosec": {
     "exclude_files": {
-      "external/.*": "third-party code"
-    }
-  },
-  "nilness": {
-    "exclude_files": {
-      "external/.*": "enforce requirements only on first-party code",
-      ".*/github.com/miekg/pkcs11/.*": "cgo third party code"
+      ".*/cgo/github.com/ThalesIgnite/crypto11/.*": "cgo third-party code",
+      ".*/cgo/github.com/miekg/pkcs11/.*": "cgo third party code",
+      "bazel-out/.*/testmain.go": "test main",
+      "external/.*": "third-party code",
+      "armada/server/pkg/rpc/armada.go": "known issues"
     }
   },
   "lostcancel": {
     "exclude_files": {
-      "external/com_github_grpc_ecosystem_grpc_gateway_v2/runtime/context.go": "context outlives function",
-      "external/com_github_grpc_ecosystem_go_grpc_middleware/retry/retry.go": "context outlives function"
+      "external/com_github_grpc_ecosystem_go_grpc_middleware/retry/retry.go": "context outlives function",
+      "external/com_github_grpc_ecosystem_grpc_gateway_v2/runtime/context.go": "context outlives function"
+    }
+  },
+  "nilfunc": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "nilness": {
+    "exclude_files": {
+      ".*/cgo/github.com/miekg/pkcs11/.*": "cgo third party code",
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "printf": {
+    "exclude_files": {
+      "external/.*": "enforce requirements only on first-party code"
+    }
+  },
+  "shadow": {
+    "exclude_files": {
+      ".*/cgo/github.com/ThalesIgnite/crypto11/.*": "cgo third-party code",
+      ".*\\.pb\\.gw\\.go": "generated code",
+      "external/.*": "enforce requirements only on first-party code"
     }
   },
   "unreachable": {
@@ -53,7 +62,7 @@
       "external/.*": "enforce requirements only on first-party code"
     }
   },
-  "printf": {
+  "unsafeptr": {
     "exclude_files": {
       "external/.*": "enforce requirements only on first-party code"
     }

@@ -2090,6 +2090,12 @@ def go_dependencies():
         sum = "h1:nP9CBfwrvYnBRgY6qfDQkygYDmYwOilePFkwzv4dU8A=",
         version = "v1.0.0",
     )
+    go_repository(
+        name = "com_github_mozilla_tls_observatory",
+        importpath = "github.com/mozilla/tls-observatory",
+        sum = "h1:1xJ+Xi9lYWLaaP4yB67ah0+548CD3110mCPWhVVjFkI=",
+        version = "v0.0.0-20200317151703-4fa42e1c2dee",
+    )
 
     go_repository(
         name = "com_github_mrunalp_fileutils",
@@ -2128,6 +2134,12 @@ def go_dependencies():
         importpath = "github.com/nakagami/firebirdsql",
         sum = "h1:P48LjvUQpTReR3TQRbxSeSBsMXzfK0uol7eRcr7VBYQ=",
         version = "v0.0.0-20190310045651-3c02a58cfed8",
+    )
+    go_repository(
+        name = "com_github_nbutton23_zxcvbn_go",
+        importpath = "github.com/nbutton23/zxcvbn-go",
+        sum = "h1:AREM5mwr4u1ORQBMvzfzBgpsctsbQikCVpvC+tX285E=",
+        version = "v0.0.0-20180912185939-ae427f1e4c1d",
     )
 
     go_repository(
@@ -2461,6 +2473,12 @@ def go_dependencies():
         importpath = "github.com/seccomp/libseccomp-golang",
         sum = "h1:58EBmR2dMNL2n/FnbQewK3D14nXr0V9CObDSvMJLq+Y=",
         version = "v0.9.2-0.20210429002308-3879420cc921",
+    )
+    go_repository(
+        name = "com_github_securego_gosec",
+        importpath = "github.com/securego/gosec",
+        sum = "h1:rq2/kILQnPtq5oL4+IAjgVOjh5e2yj2aaCYi7squEvI=",
+        version = "v0.0.0-20200401082031-e946c8c39989",
     )
 
     go_repository(

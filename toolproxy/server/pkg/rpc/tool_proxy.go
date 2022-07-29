@@ -172,6 +172,10 @@ func (s *Server) RunCommand(ctx context.Context, r *pb.RunCommandRequest) (*pb.C
 	doneChan := make(chan struct{})
 	go func() {
 		argv := command.GetArgv()
+
+		// #nosec G204 The purpose of this program is to launch arbitrary processes
+		// in a way that can be monitored and audited more easily than an interactive
+		// shell.
 		cmd := exec.Command(argv[0], argv[1:]...)
 
 		var stdout, stderr bytes.Buffer

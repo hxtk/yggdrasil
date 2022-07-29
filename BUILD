@@ -6,7 +6,9 @@ nogo(
     name = "my_nogo",
     #vet = True,
     config = "nogo_config.json",
-    deps = TOOLS_NOGO,
+    deps = TOOLS_NOGO + [
+        "//analyzers/gosec:go_default_library",
+    ],
     visibility = ["//visibility:public"],
 )
 
