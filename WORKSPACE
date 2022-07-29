@@ -71,7 +71,7 @@ http_archive(
     name = "com_google_protobuf",
     sha256 = "3d7764816081cb57752869d99b8d1c6523c054ceb19581737210a838d77403e0",
     strip_prefix = "protobuf-21.4",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v21.4.zip"]
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v21.4.zip"],
 )
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
