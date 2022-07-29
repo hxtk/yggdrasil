@@ -22,12 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"crypto/tls"
 	"fmt"
-	"net"
-	"net/http"
 	"os"
-	"sync"
 
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
@@ -68,47 +64,11 @@ to quickly create a Cobra application.`,
 		s.Register(rpcServer)
 		log.Info("Registration complete.")
 
-		var wg sync.WaitGroup
-		wg.Add(1)
-		go func() {
-			addr := viper.GetString("grpc.addr")
-			lis, err := net.Listen("tcp", addr)
-			if err != nil {
-				log.WithError(err).WithField("addr", addr).Fatal("Cannot open grpc listener.")
-			}
+		if viper.GetBool("tls.enabled") {
+			log.WithError(s.ServeTLS(tlsConfig)).Fatal("Server shut down.")
+		}
 
-			if viper.GetBool("tls.enabled") {
-				lis = tls.NewListener(lis, tlsConfig)
-			}
-			log.Infof("gRPC server started on %v.", lis.Addr())
-			err = s.ServeGRPC(lis)
-			if err != nil {
-				log.WithError(err).Fatal("gRPC listener returned error.")
-			}
-			wg.Done()
-		}()
-
-		wg.Add(1)
-		go func() {
-			addr := viper.GetString("http.addr")
-			lis, err := net.Listen("tcp", addr)
-			if err != nil {
-				log.WithError(err).WithField("addr", addr).Fatal("Cannot open http listener.")
-			}
-
-			if viper.GetBool("tls.enabled") {
-				lis = tls.NewListener(lis, tlsConfig)
-			}
-			log.Infof("HTTP server started on %v.", lis.Addr())
-			err = http.Serve(lis, s)
-			if err != nil {
-				log.WithError(err).Fatal("http listener returned error.")
-			}
-			wg.Done()
-		}()
-
-		wg.Wait()
-		log.Info("Servers shut down.")
+		log.WithError(s.ServePlainText()).Fatal("Server shut down.")
 	},
 }
 

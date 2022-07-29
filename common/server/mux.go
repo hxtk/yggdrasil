@@ -1,9 +1,10 @@
 package server
 
 import (
+	"crypto/tls"
 	"net"
 	"net/http"
-	"sync"
+	"strings"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -21,6 +22,10 @@ import (
 	"github.com/hxtk/yggdrasil/common/authz"
 )
 
+const (
+	ListenAddr = ":8443"
+)
+
 type Registrar interface {
 	Register(*grpc.Server, authz.Registrar)
 }
@@ -35,27 +40,21 @@ type Server struct {
 	httpListener net.Listener
 }
 
-func (s *Server) Serve() sync.WaitGroup {
-	var wg sync.WaitGroup
-	go func() {
-		wg.Add(1)
-		err := s.ServeGRPC(s.grpcListener)
-		if err != nil {
-			log.WithError(err).Fatal("gRPC listener returned error.")
-		}
-		wg.Done()
-	}()
+func (s *Server) ServePlainText() error {
+	hs := &http.Server{
+		Addr:    ListenAddr,
+		Handler: s,
+	}
+	return hs.ListenAndServe()
+}
 
-	go func() {
-		wg.Add(1)
-		err := http.Serve(s.httpListener, s)
-		if err != nil {
-			log.WithError(err).Fatal("http listener returned error.")
-		}
-		wg.Done()
-	}()
-
-	return wg
+func (s *Server) ServeTLS(tlsConfig *tls.Config) error {
+	hs := &http.Server{
+		TLSConfig: tlsConfig,
+		Addr:      ListenAddr,
+		Handler:   s,
+	}
+	return hs.ListenAndServeTLS("", "")
 }
 
 func (s *Server) ServeGRPC(lis net.Listener) error {
@@ -63,6 +62,11 @@ func (s *Server) ServeGRPC(lis net.Listener) error {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
+		s.grpcServer.ServeHTTP(w, r)
+		return
+	}
+
 	s.serveMux.ServeHTTP(w, r)
 }
 
