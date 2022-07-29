@@ -1975,8 +1975,8 @@ def go_dependencies():
     go_repository(
         name = "com_github_miekg_pkcs11",
         importpath = "github.com/miekg/pkcs11",
-        sum = "h1:Ugu9pdy6vAYku5DEpVWVFPYnzV+bxB+iRdbuFSu7TvU=",
-        version = "v1.1.1",
+        sum = "h1:iMwmD7I5225wv84WxIG/bmxz9AXjWvTWIbM/TYHvWtw=",
+        version = "v1.0.3",
     )
     go_repository(
         name = "com_github_mistifyio_go_zfs",
@@ -2627,18 +2627,6 @@ def go_dependencies():
         version = "v2.2.6+incompatible",
     )
 
-    go_repository(
-        name = "com_github_thales_e_security_pool",
-        importpath = "github.com/thales-e-security/pool",
-        sum = "h1:RAPs4q2EbWsTit6tpzuvTFlgFRJ3S8Evf5gtvVDbmPg=",
-        version = "v0.0.2",
-    )
-    go_repository(
-        name = "com_github_thalesignite_crypto11",
-        importpath = "github.com/ThalesIgnite/crypto11",
-        sum = "h1:1IiIIEqYmBvUYFeMnHqRft4bwf/O36jryEUpY+9ef8E=",
-        version = "v1.2.5",
-    )
     go_repository(
         name = "com_github_tidwall_pretty",
         importpath = "github.com/tidwall/pretty",
@@ -3294,8 +3282,8 @@ def go_dependencies():
     go_repository(
         name = "org_golang_x_crypto",
         importpath = "golang.org/x/crypto",
-        sum = "h1:zuSxTR4o9y82ebqCUJYNGJbGPo6sKVl54f/TVDObg1c=",
-        version = "v0.0.0-20220722155217-630584e8d5aa",
+        sum = "h1:kUhD7nTDoI3fVd9G4ORWrbV5NY0liEs/Jg2pv5f+bBA=",
+        version = "v0.0.0-20220411220226-7b82a4e95df4",
     )
     go_repository(
         name = "org_golang_x_exp",
@@ -3354,8 +3342,8 @@ def go_dependencies():
     go_repository(
         name = "org_golang_x_term",
         importpath = "golang.org/x/term",
-        sum = "h1:Q5284mrmYTpACcm+eAKjKJH48BBwSyfJqmmGDTtT8Vc=",
-        version = "v0.0.0-20220722155259-a9ba230a4035",
+        sum = "h1:JGgROgKl9N8DuW20oFS5gxc+lE67/N3FcwmBPMe7ArY=",
+        version = "v0.0.0-20210927222741-03fcf44c2211",
     )
     go_repository(
         name = "org_golang_x_text",

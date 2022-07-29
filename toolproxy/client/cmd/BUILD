@@ -7,7 +7,6 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//common/config:go_default_library",
-        "//common/config/flags:go_default_library",
         "//common/config/tlsconfig:go_default_library",
 	"//toolproxy/client/cmd/cancel:go_default_library",
 	"//toolproxy/client/cmd/history:go_default_library",
