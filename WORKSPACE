@@ -213,9 +213,9 @@ new_git_repository(
 
 http_archive(
     name = "com_github_hxtk_rules_anchore",
-    sha256 = "0ebe243333ff8108e9aa4a58450c561ceeb22b0a233d6e8bc9310fa8a3efc51b",
-    strip_prefix = "rules_anchore-2.2.0",
-    urls = ["https://github.com/hxtk/rules_anchore/archive/refs/tags/v2.2.0.zip"],
+    sha256 = "3c349f6a797b82ba3d35fcf7a6cabd6dc6b2b13a7d5fa83c00dd4ea63e8030b0",
+    strip_prefix = "rules_anchore-2.2.1",
+    urls = ["https://github.com/hxtk/rules_anchore/archive/refs/tags/v2.2.1.zip"],
 )
 
 load("@com_github_hxtk_rules_anchore//:deps.bzl", "anchore_deps")
