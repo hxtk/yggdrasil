@@ -8,6 +8,7 @@ nogo(
     config = "nogo_config.json",
     deps = TOOLS_NOGO + _GOKART_ANALYZERS + [
         "//analyzers/gosec:go_default_library",
+        "//analyzers/pgxsqli",
     ],
     visibility = ["//visibility:public"],
 )
