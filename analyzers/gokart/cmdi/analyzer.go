@@ -1,4 +1,4 @@
-package command_injection
+package cmdi
 
 import (
 	"reflect"
