@@ -43,7 +43,7 @@ go_rules_dependencies()
 
 go_register_toolchains(
     nogo = "@yggdrasil//:my_nogo",
-    version = "1.17.11",
+    version = "1.18.4",
 )
 
 gazelle_dependencies()
