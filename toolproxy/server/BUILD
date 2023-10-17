@@ -1,6 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
-load("@io_bazel_rules_docker//container:container.bzl", "container_layer", "container_image", "container_push")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_tarball")
 load("@com_github_hxtk_rules_anchore//anchore:anchore.bzl", "grype_test")
 
 go_library(
@@ -24,10 +24,16 @@ pkg_tar(
     package_dir = "/usr/bin",
 )
 
-container_image(
+oci_image(
     name = "server_image",
-    base = "@distroless_static//image",
+    base = "@distroless_static",
     tars = [":tool_server_pkg"],
+)
+
+oci_tarball(
+    name = "server_image.tar",
+    image = ":server_image",
+    repo_tags = ["toolproxy:latest"],
 )
 
 grype_test(

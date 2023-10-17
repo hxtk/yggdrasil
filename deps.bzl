@@ -3739,10 +3739,9 @@ def go_dependencies():
 
 # com_github_hxtk_rules_anchore managed block; DO NOT EDIT
 def grype_db():
+    # com_github_hxtk_rules_anchore managed rule; DO NOT EDIT
     http_file(
         name = "cve_database",
-        sha256 = "e064445d049b8b2c04410054ee73e000ea621754299af1f5bcc284c8b1dcabc9",
-        urls = [
-            "https://toolbox-data.anchore.io/grype/databases/vulnerability-db_v3_2022-04-11T08:15:09Z.tar.gz",
-        ],
+        sha256 = "cc8743ab185a6921d6b8d9eab95dc5d54372550abd7f10b0019cb08cbb5759b1",
+        urls = ["https://toolbox-data.anchore.io/grype/databases/vulnerability-db_v3_2023-10-17T01:25:27Z_0fd994bb3c56d6cfccf8.tar.gz"],
     )
