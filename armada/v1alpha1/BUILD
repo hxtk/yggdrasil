@@ -23,7 +23,6 @@ go_proto_library(
     name = "armada_go_proto",
     compilers = [
         "@io_bazel_rules_go//proto:go_grpc",
-        "@com_github_grpc_ecosystem_grpc_gateway_v2//protoc-gen-grpc-gateway:go_gen_grpc_gateway",
 	"//common/authz/protoc-gen-go-grpc-permissions:go_proto_permissions",
 	"//common/urn/protoc-gen-urn-parser:go_proto_urn_parser",
     ],

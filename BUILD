@@ -13,6 +13,11 @@ nogo(
     visibility = ["//visibility:public"],
 )
 
+# gazelle:resolve proto proto google/rpc/status.proto @googleapis//google/rpc:status_proto
+# gazelle:resolve proto go google/rpc/status.proto  @org_golang_google_genproto//googleapis/rpc/status
+# gazelle:resolve proto google/longrunning/operations.proto @googleapis//google/longrunning:operations_proto
+# gazelle:resolve proto go google/longrunning/operations.proto @org_golang_google_genproto//googleapis/longrunning
+
 # gazelle:prefix github.com/hxtk/yggdrasil
 gazelle(name = "gazelle")
 

@@ -17,7 +17,6 @@ go_library(
 	"@com_github_grpc_ecosystem_go_grpc_middleware//tags:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_middleware//validator:go_default_library",
 	"@com_github_grpc_ecosystem_go_grpc_prometheus//:go_default_library",
-	"@com_github_grpc_ecosystem_grpc_gateway_v2//runtime:go_default_library",
 	"@com_github_prometheus_client_golang//prometheus/promhttp:go_default_library",
         "@com_github_spf13_viper//:viper",
     ],

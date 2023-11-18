@@ -1463,6 +1463,14 @@ def go_dependencies():
     )
     go_repository(
         name = "com_github_grpc_ecosystem_grpc_gateway_v2",
+        build_directives = [
+            "gazelle:resolve proto proto google/rpc/code.proto @googleapis//google/rpc:code_proto",  # keep
+            "gazelle:resolve proto go    google/rpc/code.proto @org_golang_google_genproto_googleapis_rpc//code",  # keep
+            "gazelle:resolve proto proto google/rpc/status.proto @googleapis//google/rpc:status_proto",
+            "gazelle:resolve proto go google/rpc/status.proto  @org_golang_google_genproto//googleapis/rpc/status",
+            "gazelle:resolve proto google/longrunning/operations.proto @googleapis//google/longrunning:operations_proto",
+            "gazelle:resolve proto go google/longrunning/operations.proto @org_golang_google_genproto//googleapis/longrunning",
+        ],
         importpath = "github.com/grpc-ecosystem/grpc-gateway/v2",
         sum = "h1:Ghn7copILfeIg0y8sTGRppI1bd8I4l2VN3cob0Xeqwg=",
         version = "v2.11.0",

@@ -12,7 +12,7 @@ import (
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	//"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -33,7 +33,7 @@ type Registrar interface {
 type Server struct {
 	grpcServer    *grpc.Server
 	serveMux      *http.ServeMux
-	gwMux         *runtime.ServeMux
+	//gwMux         *runtime.ServeMux
 	resourceAuthz *authz.ResourceAuthorizer
 
 	grpcListener net.Listener
@@ -96,15 +96,15 @@ func New() *Server {
 	)
 	reflection.Register(grpcServer)
 
-	gwMux := runtime.NewServeMux()
+	//gwMux := runtime.NewServeMux()
 	mux := http.NewServeMux()
-	mux.Handle("/", gwMux)
+	//mux.Handle("/", gwMux)
 	mux.Handle("/metrics", promhttp.Handler())
 
 	return &Server{
 		grpcServer:    grpcServer,
 		resourceAuthz: resourceAuthz,
 		serveMux:      mux,
-		gwMux:         gwMux,
+		//gwMux:         gwMux,
 	}
 }
