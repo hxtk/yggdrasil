@@ -1128,8 +1128,8 @@ def go_dependencies():
     go_repository(
         name = "com_github_go_sql_driver_mysql",
         importpath = "github.com/go-sql-driver/mysql",
-        sum = "h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfCHuOE=",
-        version = "v1.6.0",
+        sum = "h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=",
+        version = "v1.5.0",
     )
     go_repository(
         name = "com_github_go_stack_stack",
@@ -1754,8 +1754,8 @@ def go_dependencies():
     go_repository(
         name = "com_github_jmoiron_sqlx",
         importpath = "github.com/jmoiron/sqlx",
-        sum = "h1:vFFPA71p1o5gAeqtEAwLU4dnX2napprKtHr7PYIcN3g=",
-        version = "v1.3.5",
+        sum = "h1:aLN7YINNZ7cYOPK3QC83dbM6KT0NMqVMw961TqrejlE=",
+        version = "v1.3.1",
     )
     go_repository(
         name = "com_github_joefitzgerald_rainbow_reporter",
@@ -2894,6 +2894,12 @@ def go_dependencies():
         sum = "h1:splanxYIlg+5LfHAM6xpdFEAYOk8iySO56hMFq6uLyA=",
         version = "v0.0.0-20181117223130-1be2e3e5546d",
     )
+    go_repository(
+        name = "com_github_yuin_goldmark",
+        importpath = "github.com/yuin/goldmark",
+        sum = "h1:fVcFKWvrslecOb/tg+Cc05dkeYx540o0FuFt3nUVDoE=",
+        version = "v1.4.13",
+    )
 
     go_repository(
         name = "com_github_yvasiyarov_go_metrics",
@@ -3471,8 +3477,8 @@ def go_dependencies():
     go_repository(
         name = "org_golang_x_mod",
         importpath = "golang.org/x/mod",
-        sum = "h1:UG21uOlmZabA4fW5i7ZX6bjw1xELEGg/ZLgZq9auk/Q=",
-        version = "v0.5.0",
+        sum = "h1:6zppjxzCulZykYSLyVDYbneBfbaBIQPYMevg0bEwv2s=",
+        version = "v0.6.0-dev.0.20220419223038-86c51ed26bb4",
     )
     go_repository(
         name = "org_golang_x_net",
@@ -3489,8 +3495,8 @@ def go_dependencies():
     go_repository(
         name = "org_golang_x_sync",
         importpath = "golang.org/x/sync",
-        sum = "h1:Ax0t5p6N38Ga0dThY21weqDEyz2oklo4IvDkpigvkD8=",
-        version = "v0.0.0-20220601150217-0de741cfad7f",
+        sum = "h1:uVc8UZUe6tr40fFVnUP5Oj+veunVezqYl9z7DYw9xzw=",
+        version = "v0.0.0-20220722155255-886fb9371eb4",
     )
     go_repository(
         name = "org_golang_x_sys",
@@ -3742,6 +3748,7 @@ def grype_db():
     # com_github_hxtk_rules_anchore managed rule; DO NOT EDIT
     http_file(
         name = "cve_database",
-        sha256 = "cc8743ab185a6921d6b8d9eab95dc5d54372550abd7f10b0019cb08cbb5759b1",
-        urls = ["https://toolbox-data.anchore.io/grype/databases/vulnerability-db_v3_2023-10-17T01:25:27Z_0fd994bb3c56d6cfccf8.tar.gz"],
+        downloaded_file_path = "downloaded.tar.gz",
+        sha256 = "a1db013c16290a7bb8f306e730673d6e56e0660b7b1f1e7035e6e54402c62d25",
+        urls = ["https://toolbox-data.anchore.io/grype/databases/vulnerability-db_v5_2023-11-17T01:27:17Z_bfa8f795c2fbd474e246.tar.gz"],
     )

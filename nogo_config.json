@@ -16,7 +16,8 @@
   },
   "copylocks": {
     "exclude_files": {
-      "external/org_golang_google_protobuf/.*": "third-party code"
+      "external/org_golang_google_protobuf/.*": "third-party code",
+      "external/bazel_gazelle/walk/config.go": "third-party code"
     }
   },
   "gosec": {
@@ -50,7 +51,8 @@
       "external/com_github_prometheus_procfs/proc[^/]*.go": "Prometheus traverses /proc filesystem.",
       "external/com_github_kevinburke_ssh_config/config.go": "TODO: Audit usage",
       "external/com_github_securego_gosec/issue.go": "Part of code scanning pipeline, not deployed.",
-      "external/com_github_nbutton23_zxcvbn_go/data/bindata.go": "Part of code scanning pipeline, not deployed."
+      "external/com_github_nbutton23_zxcvbn_go/data/bindata.go": "Part of code scanning pipeline, not deployed.",
+      "external/bazel_gazelle/language/.*.go": "third-party code"
     }
   },
   "printf": {

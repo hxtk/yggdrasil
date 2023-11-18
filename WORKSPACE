@@ -101,11 +101,22 @@ switched_rules_by_language(
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-http_archive(
+load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+maybe(
+    git_repository,
+    name = "aspect_bazel_lib",
+    commit = "794df714d7efbf5f2b986470428bea311f4fd772",
+    remote = "https://github.com/aspect-build/bazel-lib",
+    shallow_since = "1687478984 -0700",
+)
+
+maybe(
+    git_repository,
     name = "rules_oci",
-    sha256 = "21a7d14f6ddfcb8ca7c5fc9ffa667c937ce4622c7d2b3e17aea1ffbc90c96bed",
-    strip_prefix = "rules_oci-1.4.0",
-    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.4.0/rules_oci-v1.4.0.tar.gz",
+    remote = "https://github.com/archen/rules_oci",
+    commit = "7700f626ad3439a51e9735e0fb1c2f69734e8a28",
+    shallow_since = "1688397071 -0400",
 )
 
 load("@rules_oci//oci:dependencies.bzl", "rules_oci_dependencies")
@@ -189,9 +200,8 @@ new_git_repository(
 
 http_archive(
     name = "com_github_hxtk_rules_anchore",
-    sha256 = "3c349f6a797b82ba3d35fcf7a6cabd6dc6b2b13a7d5fa83c00dd4ea63e8030b0",
-    strip_prefix = "rules_anchore-2.2.1",
-    urls = ["https://github.com/hxtk/rules_anchore/archive/refs/tags/v2.2.1.zip"],
+    strip_prefix = "rules_anchore-c97ba83b21d6498cfff3e4509cb4582bfb5924a2",
+    urls = ["https://github.com/hxtk/rules_anchore/archive/c97ba83b21d6498cfff3e4509cb4582bfb5924a2.zip"],
 )
 
 load("@com_github_hxtk_rules_anchore//:deps.bzl", "anchore_deps")
