@@ -41,6 +41,7 @@ go_proto_library(
 
 go_test(
     name = "authz_test",
+    timeout = "short",
     srcs = ["interceptor_test.go"],
     embed = [":authz"],
     importpath = "github.com/hxtk/yggdrasil/common/authz",

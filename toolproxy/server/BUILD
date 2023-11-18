@@ -38,6 +38,7 @@ oci_tarball(
 
 grype_test(
     name = "cve_scan",
+    timeout = "short",
     database = "@cve_database//file",
     image = ":server_image.tar",
 )

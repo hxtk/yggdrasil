@@ -9,6 +9,7 @@ go_library(
 
 go_test(
     name = "urn_test",
+    timeout = "short",
     srcs = ["parser_test.go"],
     embed = [":urn"],
     importpath = "github.com/hxtk/yggdrasil/common/urn",

@@ -26,6 +26,7 @@ go_library(
 
 go_test(
     name = "rpc_test",
+    timeout = "short",
     srcs = [
         "tool_proxy_create_test.go",
         "tool_proxy_delete_test.go",
