@@ -7,8 +7,8 @@ go_library(
     importpath = "github.com/hxtk/yggdrasil/common/urn/protoc-gen-urn-parser",
     visibility = ["//visibility:private"],
     deps = [
-        "//common/urn/protoc-gen-urn-parser/plugin:go_default_library",
-	"@org_golang_google_protobuf//compiler/protogen:go_default_library",
+        "//common/urn/protoc-gen-urn-parser/plugin",
+        "@org_golang_google_protobuf//compiler/protogen",
     ],
 )
 
@@ -24,7 +24,5 @@ go_proto_compiler(
     suffix = ".urn_parser.pb.go",
     valid_archive = False,
     visibility = ["//visibility:public"],
-    #deps = [
-    #    "//common/authz/v1alpha1:validators_golang",
-    #],
+    deps = ["//common/urn"],
 )

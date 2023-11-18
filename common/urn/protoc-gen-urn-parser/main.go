@@ -5,7 +5,7 @@ import (
 
 	"google.golang.org/protobuf/compiler/protogen"
 
-	"github.com/hxtk/yggdrasil/common/authz/protoc-gen-go-grpc-permissions/plugin"
+	"github.com/hxtk/yggdrasil/common/urn/protoc-gen-urn-parser/plugin"
 )
 
 func main() {

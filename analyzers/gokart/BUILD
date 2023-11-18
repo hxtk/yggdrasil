@@ -4,4 +4,3 @@ bzl_library(
     name = "gokart",
     srcs = ["gokart.bzl"],
 )
-

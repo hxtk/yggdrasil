@@ -6,7 +6,7 @@ go_library(
     importpath = "github.com/hxtk/yggdrasil/toolproxy/client",
     visibility = ["//visibility:private"],
     deps = [
-        "//toolproxy/client/cmd:cmd"
+        "//toolproxy/client/cmd",
     ],
 )
 

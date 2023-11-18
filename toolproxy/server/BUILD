@@ -8,7 +8,7 @@ go_library(
     srcs = ["main.go"],
     importpath = "github.com/hxtk/yggdrasil/toolproxy/server",
     visibility = ["//visibility:private"],
-    deps = ["//toolproxy/server/cmd:cmd"],
+    deps = ["//toolproxy/server/cmd"],
 )
 
 go_binary(
@@ -38,6 +38,6 @@ oci_tarball(
 
 grype_test(
     name = "cve_scan",
-    image = ":server_image.tar",
     database = "@cve_database//file",
+    image = ":server_image.tar",
 )

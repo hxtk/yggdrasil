@@ -1,22 +1,20 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
-    name = "go_default_library",
-    srcs = glob(["*.go"], exclude=["*_test.go"]),
+    name = "authn",
+    srcs = ["interceptor.go"],
     importpath = "github.com/hxtk/yggdrasil/common/authn",
-    deps = [
-	"@com_authzed_api//:v1_go_proto",
-        "@com_github_google_uuid//:go_default_library",
-	"@com_github_grpc_ecosystem_go_grpc_middleware//auth:go_default_library",
-	"@com_github_grpc_ecosystem_go_grpc_middleware//:go_default_library",
-	"@com_github_sirupsen_logrus//:go_default_library",
-	"@org_golang_google_grpc//codes:go_default_library",
-	"@org_golang_google_grpc//credentials:go_default_library",
-	"@org_golang_google_grpc//metadata:go_default_library",
-	"@org_golang_google_grpc//status:go_default_library",
-	"@org_golang_google_grpc//peer:go_default_library",
-    ],
     visibility = [
         "//visibility:public",
+    ],
+    deps = [
+        "@com_github_authzed_authzed_go//proto/authzed/api/v1:api",
+        "@com_github_google_uuid//:uuid",
+        "@com_github_grpc_ecosystem_go_grpc_middleware//auth",
+        "@com_github_sirupsen_logrus//:logrus",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//credentials",
+        "@org_golang_google_grpc//peer",
+        "@org_golang_google_grpc//status",
     ],
 )

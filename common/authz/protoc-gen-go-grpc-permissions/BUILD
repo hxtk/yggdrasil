@@ -7,8 +7,8 @@ go_library(
     importpath = "github.com/hxtk/yggdrasil/common/authz/protoc-gen-go-grpc-permissions",
     visibility = ["//visibility:private"],
     deps = [
-        "//common/authz/protoc-gen-go-grpc-permissions/plugin:go_default_library",
-	"@org_golang_google_protobuf//compiler/protogen:go_default_library",
+        "//common/authz/protoc-gen-go-grpc-permissions/plugin",
+        "@org_golang_google_protobuf//compiler/protogen",
     ],
 )
 
@@ -24,7 +24,5 @@ go_proto_compiler(
     suffix = ".permissions.pb.go",
     valid_archive = False,
     visibility = ["//visibility:public"],
-    #deps = [
-    #    "//common/authz/v1alpha1:validators_golang",
-    #],
+    deps = ["//common/authz"],
 )

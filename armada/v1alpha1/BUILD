@@ -5,17 +5,18 @@ load("@io_bazel_rules_go//proto:def.bzl", "go_proto_library")
 proto_library(
     name = "armada_proto",
     srcs = ["armada.proto"],
+    visibility = ["//visibility:public"],
     deps = [
-        "@com_google_googleapis//google/api:annotations_proto",
-        "@com_google_googleapis//google/api:resource_proto",
-        "@com_google_googleapis//google/api:field_behavior_proto",
-        "@com_google_googleapis//google/api:client_proto",
-        "@com_google_googleapis//google/type:money_proto",
+        "//common/authz/v1alpha1:annotations_proto",
         "@com_google_protobuf//:duration_proto",
         "@com_google_protobuf//:empty_proto",
         "@com_google_protobuf//:field_mask_proto",
         "@com_google_protobuf//:timestamp_proto",
-	"//common/authz/v1alpha1:annotations_proto",
+        "@googleapis//google/api:annotations_proto",
+        "@googleapis//google/api:client_proto",
+        "@googleapis//google/api:field_behavior_proto",
+        "@googleapis//google/api:resource_proto",
+        "@googleapis//google/type:money_proto",
     ],
 )
 
@@ -23,32 +24,28 @@ go_proto_library(
     name = "armada_go_proto",
     compilers = [
         "@io_bazel_rules_go//proto:go_grpc",
-	"//common/authz/protoc-gen-go-grpc-permissions:go_proto_permissions",
-	"//common/urn/protoc-gen-urn-parser:go_proto_urn_parser",
+        "//common/authz/protoc-gen-go-grpc-permissions:go_proto_permissions",
+        "//common/urn/protoc-gen-urn-parser:go_proto_urn_parser",
     ],
     importpath = "github.com/hxtk/yggdrasil/armada/v1alpha1",
     proto = ":armada_proto",
+    visibility = ["//visibility:public"],
     deps = [
-        "@com_google_googleapis//google/api:annotations_go_proto",
-	"@com_google_googleapis//google/type:money_go_proto",
-	"@io_bazel_rules_go//proto/wkt:duration_go_proto",
-	"@io_bazel_rules_go//proto/wkt:empty_go_proto",
-	"@io_bazel_rules_go//proto/wkt:field_mask_go_proto",
-	"@io_bazel_rules_go//proto/wkt:timestamp_go_proto",
-	"//common/authz/v1alpha1:go_default_library",
-        "//common/authz:go_default_library",
-        "//common/urn:go_default_library",
+        "//common/authz/v1alpha1",
+        "@org_golang_google_genproto//googleapis/api/annotations",
+        "@org_golang_google_genproto//googleapis/type/money",
     ],
 )
 
 go_library(
-    name = "go_default_library",
+    name = "v1alpha1",
+    srcs = ["doc.go"],
     embed = [
         ":armada_go_proto",
     ],
     importpath = "github.com/hxtk/yggdrasil/armada/v1alpha1",
     visibility = [
-        "//armada/server/pkg/rpc:__pkg__",
         "//armada/client/pkg/rpc:__pkg__",
+        "//armada/server/pkg/rpc:__pkg__",
     ],
 )

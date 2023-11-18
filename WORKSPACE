@@ -24,6 +24,7 @@ http_archive(
 )
 
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
 go_rules_dependencies()
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
@@ -32,15 +33,14 @@ go_repository(
     name = "org_golang_google_grpc",
     build_file_proto_mode = "disable",
     importpath = "google.golang.org/grpc",
-    sum = "h1:rQOsyJ/8+ufEDJd/Gdsz7HG220Mh9HAhFHRGnIjda0w=",
-    version = "v1.48.0",
+    sum = "h1:Z5Iec2pjwb+LEOqzpB2MR12/eKFhDPhuqW91O+4bwUk=",
+    version = "v1.59.0",
 )
 
 load("//:deps.bzl", "go_dependencies")
 
 # gazelle:repository_macro deps.bzl%go_dependencies
 go_dependencies()
-
 
 go_register_toolchains(
     nogo = "@yggdrasil//:my_nogo",
@@ -101,9 +101,9 @@ switched_rules_by_language(
 # Container Rules
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
 maybe(
     git_repository,
     name = "aspect_bazel_lib",
@@ -115,8 +115,8 @@ maybe(
 maybe(
     git_repository,
     name = "rules_oci",
-    remote = "https://github.com/archen/rules_oci",
     commit = "7700f626ad3439a51e9735e0fb1c2f69734e8a28",
+    remote = "https://github.com/archen/rules_oci",
     shallow_since = "1688397071 -0400",
 )
 
