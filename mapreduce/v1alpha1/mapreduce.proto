@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package yggdrasil.mapreduce.v1alpha1;
+
+option go_package="github.com/hxtk/yggdrasil/mapreduce/v1alpha1;mapreduce";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/longrunning/operations.proto";
+
+message Record {
+  bytes key = 1;
+  bytes value = 2;
+}
+
+message ListRecordsRequest {
+  string parent = 1;
+}
+
+service Mapper {
+  rpc MapRecord(Record) returns (stream Record) {}
+}
+
+service Reducer {
+  rpc ReduceRecords(stream Record) returns (stream Record) {}
+}
+
+service RecordReader {
+  rpc ReadRecords(ListRecordsRequest) returns (stream Record) {}
+}
+
+service RecordWriter {
+  rpc WriteRecords(stream Record) returns (google.protobuf.Empty) {}
+}
+
+message MapReduceJob {
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+
+  // A splitter takes in the list of inputs and transforms them into the
+  // initial Records that will be passed into the mapper. In a kubernetes
+  // implementation, this must identify a container image whose entrypoint
+  // is a server hosting the Splitter RPC.
+  string splitter = 2;
+
+  // A mapper
+  string mapper = 3;
+  int32 mapper_count = 4;
+
+  string reducer = 5;
+  int32 reducer_count = 6;
+
+  string combiner = 7;
+
+  int32 concurrency_limit = 8;
+
+
+  google.protobuf.Timestamp create_time = 9;
+  google.protobuf.Timestamp complete_time = 10;
+}

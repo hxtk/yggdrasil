@@ -3,12 +3,14 @@ load("@com_github_hxtk_rules_anchore//anchore:defs.bzl", "grype_updater")
 load("@io_bazel_rules_go//go:def.bzl", "TOOLS_NOGO", "nogo")
 load("//analyzers/gokart:gokart.bzl", _GOKART_ANALYZERS = "ANALYZERS")
 
+exports_files(glob(["*"]))
+
 nogo(
     name = "my_nogo",
     config = "nogo_config.json",
     visibility = ["//visibility:public"],
     deps = TOOLS_NOGO + _GOKART_ANALYZERS + [
-        "//analyzers/gosec:go_default_library",
+        "//analyzers/gosec",
         "//analyzers/pgxsqli",
     ],
 )
@@ -26,7 +28,7 @@ nogo(
 # gazelle:resolve proto proto google/rpc/status.proto @googleapis//google/rpc:status_proto
 # gazelle:resolve proto go google/rpc/status.proto  @org_golang_google_genproto//googleapis/rpc/status
 # gazelle:resolve proto google/longrunning/operations.proto @googleapis//google/longrunning:operations_proto
-# gazelle:resolve proto go google/longrunning/operations.proto @org_golang_google_genproto//googleapis/longrunning
+# gazelle:resolve proto go google/longrunning/operations.proto @com_google_cloud_go_longrunning//autogen/longrunningpb
 
 # gazelle:prefix github.com/hxtk/yggdrasil
 gazelle(name = "gazelle")

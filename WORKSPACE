@@ -44,7 +44,7 @@ go_dependencies()
 
 go_register_toolchains(
     nogo = "@yggdrasil//:my_nogo",
-    version = "1.21.4",
+    version = "1.21.5",
 )
 
 gazelle_dependencies()
@@ -81,10 +81,10 @@ protobuf_deps()
 
 http_archive(
     name = "googleapis",
-    sha256 = "9d1a930e767c93c825398b8f8692eca3fe353b9aaadedfbcf1fca2282c85df88",
-    strip_prefix = "googleapis-64926d52febbf298cb82a8f472ade4a3969ba922",
+    sha256 = "2ffb5ee6078931ce38e654bd424e5f8eaf769149494b9390de4b9bbd703563a4",
+    strip_prefix = "googleapis-e56f4b1c926f42d6ab127c049158df2dda189914",
     urls = [
-        "https://github.com/googleapis/googleapis/archive/64926d52febbf298cb82a8f472ade4a3969ba922.zip",
+        "https://github.com/googleapis/googleapis/archive/e56f4b1c926f42d6ab127c049158df2dda189914.zip",
     ],
 )
 

@@ -1,0 +1,5 @@
+go test fuzz v1
+[]byte("{\x9a\x0e\xc6\xff")
+[]byte("{\x9a\x0e")
+int64(10)
+uint32(49)
